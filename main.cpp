@@ -5,118 +5,91 @@
 
 using namespace std;
 
-unordered_map<string, int> stringToSerial;
-unordered_map<int, string> serialToString;
-
 struct Book {
-
     string bookName, authorBook;
     int serialNumber;
-
 };
 
-    void setMap(const string& bookRec, const int& serialNumber) {
+void setMap(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, const string& bookRec, const int& serialNumber) {
+    serialToString[serialNumber] = bookRec;
+    stringToSerial[bookRec] = serialNumber;
+}
 
-
-    serialToString [serialNumber] = bookRec;
-    stringToSerial [bookRec] = serialNumber;
-    }
-
-void toLowerSting (string& inputString){
-
-    for (int i=0; i<inputString.size(); i++){
-
+void toLowerString(string& inputString) {
+    for (int i = 0; i < inputString.size(); i++) {
         inputString[i] = tolower(inputString[i]);
     }
 }
 
-void saveBook (Book book) {
-
+void saveBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, Book book) {
     ofstream outPutFile("Book.txt", ios::app);
-
     if (outPutFile.is_open()) {
-
         outPutFile << book.bookName << '\n';
         outPutFile << book.authorBook << '\n';
         outPutFile << book.serialNumber << '\n';
 
-        setMap(book.bookName, book.serialNumber);
+        setMap(stringToSerial, serialToString, book.bookName, book.serialNumber);
 
         outPutFile.close();
 
-        cout << "Book Added To Libr8aray Sucessfuly !" << '\n';
-
-
+        cout << "Book Added To Library Successfully!" << '\n';
     } else {
-
-        cout << "Unable To Open File, Please Contact Developers !" << '\n';
+        cout << "Unable To Open File, Please Contact Developers!" << '\n';
     }
-
 }
 
-void searchByID () {
+void searchByID(unordered_map<int, string>& serialToString) {
     int ID;
-    cout << "Please Enter ID : "; cin >> ID; cout << '\n';
-    if(serialToString[ID] != "") {
-
-        cout << "Book Founded Sucessfuly !" << '\n';
-        cout << "Book Name : " << serialToString[ID] << '\n';
+    cout << "Please Enter ID: "; cin >> ID; cout << '\n';
+    if (serialToString.find(ID) != serialToString.end()) {
+        cout << "Book Found Successfully!" << '\n';
+        cout << "Book Name: " << serialToString[ID] << '\n';
     } else {
-
-        cout << "Invalid ID Number !" << '\n';
+        cout << "Invalid ID Number!" << '\n';
     }
-
 }
 
-void searchByName () {
-
+void searchByName(unordered_map<string, int>& stringToSerial) {
     string inputSearchName;
-    cout << "Please Enter Book Name : "; cin >> inputSearchName; cout << '\n';
+    cout << "Please Enter Book Name: "; cin >> inputSearchName; cout << '\n';
 
-    toLowerSting(inputSearchName);
+    toLowerString(inputSearchName);
 
-    if (stringToSerial[inputSearchName] != 0) {
-        cout << "Book Founded Succesfuly !" << '\n' << '\n';
-        cout << "Book ID : " << stringToSerial[inputSearchName] << '\n';
+    if (stringToSerial.find(inputSearchName) != stringToSerial.end()) {
+        cout << "Book Found Successfully!" << '\n' << '\n';
+        cout << "Book ID: " << stringToSerial[inputSearchName] << '\n';
     } else {
-        cout << "Invalid Book Name !" << '\n';
+        cout << "Invalid Book Name!" << '\n';
     }
-
 }
 
-void searchSystem (Book book) {
-
-    string inputSearchString;
+void searchSystem(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, Book book) {
     int inputSearchID;
 
-    cout << "Please Enter Search Choose : "; cin >> inputSearchID; cout << '\n';
+    cout << "Please Enter Search Choice: "; cin >> inputSearchID; cout << '\n';
     switch (inputSearchID) {
         case 1:
-            searchByID();
+            searchByID(serialToString);
             break;
         case 2:
-            searchByName();
+            searchByName(stringToSerial);
             break;
         default:
-            cout << "Invalid Key, Please Try Again !" << '\n';
+            cout << "Invalid Key, Please Try Again!" << '\n';
             break;
     }
-
 }
 
-void addBook (Book book) {
+void addBook(Book& book, unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
+    cout << "Please Enter Book Name: "; cin >> book.bookName; cout << '\n';
+    toLowerString(book.bookName);
+    cout << "Please Enter Author Book Name: "; cin >> book.authorBook; cout << '\n';
+    cout << "Please Enter Book Serial Number: "; cin >> book.serialNumber; cout << '\n';
 
-    cout << "Please Enter Book Name : "; cin >> book.bookName; cout << '\n';
-    toLowerSting(book.bookName);
-    cout << "Please Enter Author Book Name : "; cin >> book.authorBook; cout << '\n';
-    cout << "Please Enter Book Serial Number : "; cin >> book.serialNumber; cout << '\n';
-
-    saveBook(book);
-
+    saveBook(stringToSerial, serialToString, book);
 }
 
-void helpSystem () {
-
+void helpSystem() {
     cout << "0 -> Help System " << '\n';
     cout << "1 -> Adding Book " << '\n';
     cout << "2 -> Reading Book " << '\n';
@@ -126,6 +99,9 @@ void helpSystem () {
 
 int main() {
 
+    unordered_map<string, int> stringToSerial;
+    unordered_map<int, string> serialToString;
+
     Book book;
     int inputNumber;
 
@@ -134,32 +110,29 @@ int main() {
     do {
         cout << "> "; cin >> inputNumber; cout << '\n';
         switch (inputNumber) {
-
             case 0:
                 helpSystem();
                 break;
             case 1:
-                addBook(book);
+                addBook(book, stringToSerial, serialToString);
                 break;
             case 2:
                 //readBook();
-                searchSystem(book);
+                searchSystem(stringToSerial, serialToString, book);
                 break;
             case 3:
                 //editBook();
                 break;
             case 4:
-               // adminPanel();
-               break;
+                // adminPanel();
+                break;
             default:
-               //invalidSystem();
-               break;
+                //invalidSystem();
+                break;
         }
 
-    }   while (inputNumber != 5); {
+    } while (inputNumber != 5);
 
-        cout << "Thanks For Choosing Us !" << '\n';
-        exit(1);
-    }
+    cout << "Thanks For Choosing Us!" << '\n';
     return 0;
 }
