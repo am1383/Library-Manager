@@ -1,13 +1,39 @@
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <unordered_map>
 
 using namespace std;
 
-struct Book {
-    string bookName, authorBook;
+class Book {
+private:
+    string bookName;
+    string authorBook;
     int serialNumber;
+
+public:
+    string getBookName() const {
+        return bookName;
+    }
+
+    string getAuthorBook() const {
+        return authorBook;
+    }
+
+    int getSerialNumber() const {
+        return serialNumber;
+    }
+
+    void setBookName(const string& bookNameR) {
+        bookName = bookNameR;
+    }
+
+    void setAuthorBook(const string& authorBookR) {
+        authorBook = authorBookR;
+    }
+
+    void setSerialNumber(const int& serialNumberR) {
+        serialNumber = serialNumberR;
+    }
 };
 
 void setMap(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, const string& bookRec, const int& serialNumber) {
@@ -15,20 +41,21 @@ void setMap(unordered_map<string, int>& stringToSerial, unordered_map<int, strin
     stringToSerial[bookRec] = serialNumber;
 }
 
-void toLowerString(string& inputString) {
+string toLowerString(string& inputString) {
     for (int i = 0; i < inputString.size(); i++) {
         inputString[i] = tolower(inputString[i]);
     }
+    return inputString;
 }
 
-void saveBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, Book book) {
-    ofstream outPutFile("Book.txt", ios::app);
+void saveBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, const Book& book) {
+    ofstream outPutFile(book.getBookName() + " Book.txt");
     if (outPutFile.is_open()) {
-        outPutFile << book.bookName << '\n';
-        outPutFile << book.authorBook << '\n';
-        outPutFile << book.serialNumber << '\n';
+        outPutFile << book.getBookName() << '\n';
+        outPutFile << book.getAuthorBook() << '\n';
+        outPutFile << book.getSerialNumber() << '\n';
 
-        setMap(stringToSerial, serialToString, book.bookName, book.serialNumber);
+        setMap(stringToSerial, serialToString, book.getBookName(), book.getSerialNumber());
 
         outPutFile.close();
 
@@ -63,7 +90,7 @@ void searchByName(unordered_map<string, int>& stringToSerial) {
     }
 }
 
-void searchSystem(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, Book book) {
+void searchSystem(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
     int inputSearchID;
 
     cout << "Please Enter Search Choice: "; cin >> inputSearchID; cout << '\n';
@@ -81,11 +108,13 @@ void searchSystem(unordered_map<string, int>& stringToSerial, unordered_map<int,
 }
 
 void addBook(Book& book, unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
+    string inputString;
+    int inputID;
+
     cout << "|---Add Book Page---|" << '\n' << '\n';
-    cout << "Please Enter Book Name: "; cin >> book.bookName; cout << '\n';
-    toLowerString(book.bookName);
-    cout << "Please Enter Author Book Name: "; cin >> book.authorBook; cout << '\n';
-    cout << "Please Enter Book Serial Number: "; cin >> book.serialNumber; cout << '\n';
+    cout << "Please Enter Book Name: "; cin >> inputString; book.setBookName(inputString);
+    cout << "Please Enter Author Book Name: "; cin >> inputString; book.setAuthorBook(inputString);
+    cout << "Please Enter Book Serial Number: "; cin >> inputID; book.setSerialNumber(inputID);
 
     saveBook(stringToSerial, serialToString, book);
 }
@@ -100,7 +129,6 @@ void helpSystem() {
 }
 
 int main() {
-
     unordered_map<string, int> stringToSerial;
     unordered_map<int, string> serialToString;
 
@@ -119,8 +147,7 @@ int main() {
                 addBook(book, stringToSerial, serialToString);
                 break;
             case 2:
-                //readBook();
-                searchSystem(stringToSerial, serialToString, book);
+                searchSystem(stringToSerial, serialToString);
                 break;
             case 3:
                 //editBook();
