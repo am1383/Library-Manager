@@ -56,7 +56,7 @@ void searchByName(unordered_map<string, int>& stringToSerial) {
     toLowerString(inputSearchName);
 
     if (stringToSerial.find(inputSearchName) != stringToSerial.end()) {
-        cout << "Book Found Successfully!" << '\n' << '\n';
+        cout << "Book Found Successfully!" << '\n';
         cout << "Book ID: " << stringToSerial[inputSearchName] << '\n';
     } else {
         cout << "Invalid Book Name!" << '\n';
@@ -81,6 +81,7 @@ void searchSystem(unordered_map<string, int>& stringToSerial, unordered_map<int,
 }
 
 void addBook(Book& book, unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
+    cout << "|---Add Book Page---|" << '\n' << '\n';
     cout << "Please Enter Book Name: "; cin >> book.bookName; cout << '\n';
     toLowerString(book.bookName);
     cout << "Please Enter Author Book Name: "; cin >> book.authorBook; cout << '\n';
@@ -90,11 +91,12 @@ void addBook(Book& book, unordered_map<string, int>& stringToSerial, unordered_m
 }
 
 void helpSystem() {
-    cout << "0 -> Help System " << '\n';
-    cout << "1 -> Adding Book " << '\n';
+    cout << "|---Help Page---|" << '\n' << '\n';
+    cout << "0 -> Help System "  << '\n';
+    cout << "1 -> Adding Book "  << '\n';
     cout << "2 -> Reading Book " << '\n';
-    cout << "3 -> Edit Book " << '\n';
-    cout << "4 -> Admin Panel" << '\n';
+    cout << "3 -> Edit Book "    << '\n';
+    cout << "4 -> Admin Panel"   << '\n';
 }
 
 int main() {
