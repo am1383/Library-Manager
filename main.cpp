@@ -1,16 +1,18 @@
-    #include <iostream>
-    #include <fstream>
-    #include <unordered_map>
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <unordered_map>
 
-    using namespace std;
+using namespace std;
 
-    class Book {
+class Book {
 
     private:
         string bookName, bookDetails, authorBook;
         int serialNumber;
 
     public:
+        //Book () : bookName(bookName), bookDetails(bookDetails), authorBook(authorBook), serialNumber(serialNumber) {}
         string getBookName() const {
             return bookName;
         }
@@ -42,22 +44,13 @@
         void setBookDetails (const string& bookDetailsR) {
             bookDetails = bookDetailsR;
         }
-    };
-
-std::string toLowerCharAtIndex(const std::string& inputString, int index) {
-    std::string result = inputString; // Make a copy of the input string
-    if (index >= 0 && index < result.length()) {
-        result[index] = std::tolower(result[index]); // Convert the character at the specified index to lowercase
-    }
-    return result;
-}
-
-    void setMap(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, const string& bookRec, const int& serialNumber) {
+};
+    void setMap(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, const string& bookRec, const int& serialNumber, Book& book) {
         serialToString[serialNumber] = bookRec;
         stringToSerial[bookRec] = serialNumber;
     }
 
-    void saveBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, const Book& book) {
+    void saveBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, Book& book) {
         ofstream outPutFile(book.getBookName() + " Book.txt");
         if (outPutFile.is_open()) {
             outPutFile << book.getBookName() << '\n';
@@ -65,11 +58,25 @@ std::string toLowerCharAtIndex(const std::string& inputString, int index) {
             outPutFile << book.getAuthorBook() << '\n';
             outPutFile << book.getSerialNumber() << '\n';
 
-            setMap(stringToSerial, serialToString, book.getBookName(), book.getSerialNumber());
+            setMap(stringToSerial, serialToString, book.getBookName(), book.getSerialNumber(), book);
 
             outPutFile.close();
 
             cout << "Book Added To Library Successfully!" << '\n';
+            } else {
+                cout << "Unable To Open File, Please Contact Developers!" << '\n';
+            }
+    }
+
+    void openBook(Book& book) {
+        ifstream inputFile(book.getBookName() + " Book.txt");
+
+        if (inputFile.is_open()) {
+            string line;
+            while (getline(inputFile, line)) {
+                cout << line <<'\n' << '\n';
+            }
+            inputFile.close();
         } else {
             cout << "Unable To Open File, Please Contact Developers!" << '\n';
         }
@@ -89,54 +96,11 @@ std::string toLowerCharAtIndex(const std::string& inputString, int index) {
         return 1;
     }
 
-    void searchByID(unordered_map<int, string>& serialToString) {
-        int ID;
-        cout << "Please Enter ID: "; cin >> ID; cout << '\n';
-        if (serialToString.find(ID) != serialToString.end()) {
-            cout << "Book Found Successfully!" << '\n';
-            cout << "Book Name: " << serialToString[ID] << '\n';
-        } else {
-            cout << "Invalid ID Number!" << '\n';
-        }
-    }
-
-    void searchByName(unordered_map<string, int>& stringToSerial) {
-        string inputSearchName;
-        cout << "Please Enter Book Name: "; cin >> inputSearchName;
-
-        //toLowerString(inputSearchName);
-
-        if (stringToSerial.find(inputSearchName) != stringToSerial.end()) {
-            cout << "Book Found Successfully!" << '\n';
-            cout << "Book ID: " << stringToSerial[inputSearchName] << '\n';
-        } else {
-            cout << "Invalid Book Name!" << '\n';
-        }
-    }
-
-    void searchSystem(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
-        int inputSearchID;
-
-        cout << "Please Enter Search Choice: "; cin >> inputSearchID; cout << '\n';
-        switch (inputSearchID) {
-            case 1:
-                searchByID(serialToString);
-                break;
-            case 2:
-                searchByName(stringToSerial);
-                break;
-            default:
-                cout << "Invalid Key, Please Try Again!" << '\n';
-                break;
-        }
-    }
-
     void addBook(Book& book, unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
         string inputString;
         int inputID;
 
         cout << "> Add Book Page" << '\n' << '\n';
-
         cout << "Please Enter Book Name: "; cin >> inputString;
 
         while (checkValidationString(stringToSerial, inputString)) {
@@ -147,7 +111,7 @@ std::string toLowerCharAtIndex(const std::string& inputString, int index) {
         book.setBookName(inputString);
 
         cout << "Please Enter Author Book Name: "; cin >> inputString; book.setAuthorBook(inputString);
-        cout << "Please Enter Book Details : "; cin >> inputString; book.setBookDetails(inputString);
+        cout << "Please Enter Book Details: "; cin >> inputString; book.setBookDetails(inputString);
         cout << "Please Enter Book Serial Number: "; cin >> inputID;
 
         while (checkValidationID(serialToString, inputID)) {
@@ -160,46 +124,70 @@ std::string toLowerCharAtIndex(const std::string& inputString, int index) {
         saveBook(stringToSerial, serialToString, book);
     }
 
-void editBookInfo(Book& book) {
-    string inputString;
-    string tempInput = book.getBookDetails();
+    void editBookInfo(Book& book) {
+        string inputString;
+        string tempInput = book.getBookDetails();
 
-    cout << "Please Enter New Book Details: ";
-    cin >> inputString;
+        cout << "Please Enter New Book Details: ";
+        cin >> inputString;
 
-    inputString.resize(inputString.length());
+        inputString.resize(inputString.length());
 
-    for (int i = 0; i < inputString.length(); i++) {
-        if (tempInput[i] != inputString[i]) {
-            inputString[i] = tolower(inputString[i]);
+        for (int i = 0; i < inputString.length(); i++) {
+            if (tempInput[i] != inputString[i]) {
+                inputString[i] = tolower(inputString[i]);
+            }
+        }
+
+        cout << "New Details Book :" << inputString << '\n';
+        book.setBookDetails(inputString);
+    }
+
+    void readBook (Book& book, string& inputString, int& inputNumber, unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
+        cout << "Please Enter Choose Search Selection : "; cin >> inputNumber;
+
+        switch (inputNumber) {
+        case 1:
+            cout << "Please Enter Book ID : "; cin >> inputNumber;
+            if(checkValidationID(serialToString, inputNumber)) {
+                openBook(book);
+            } else {
+                cout << "This Book Is Not Available, Please Try Again" << '\n';
+            }
+        break;
+
+        case 2:
+            cout << "Please Enter Book Name : "; cin >> inputString;
+            if(checkValidationString(stringToSerial, inputString)) {
+                openBook(book);
+            }
+
+        default:
+            break;
         }
     }
 
-    cout << " New Details Book :" << inputString << '\n';
-    book.setBookDetails(inputString);
-}
-
     void helpSystem() {
-        cout << "> Help Page      "  << '\n' << '\n';
-        cout << "0 -> Help System "  << '\n';
-        cout << "1 -> Adding Book "  << '\n';
-        cout << "2 -> Reading Book"  << '\n';
-        cout << "3 -> Edit Book   "  << '\n';
-        cout << "4 -> Admin Panel "  << '\n';
+        cout << "> Help Page"       << '\n' << '\n';
+        cout << "0 -> Help System"  << '\n';
+        cout << "1 -> Adding Book"  << '\n';
+        cout << "2 -> Search Book"  << '\n';
+        cout << "3 -> Edit Book"    << '\n';
+        cout << "4 -> Read Book"    << '\n';
     }
 
-    int main() {
-        unordered_map<string, int> stringToSerial;
-        unordered_map<int, string> serialToString;
+int main() {
+    unordered_map<string, int> stringToSerial;
+    unordered_map<int, string> serialToString;
 
-        Book book;
-        int inputNumber;
-        string inputString;
+    Book book;
+    int inputNumber(0);
+    string inputString("");
 
-        cout << "---------------------------------Book Management System---------------------------------" << '\n';
+    cout << setw(50) << "---------------------------------Book Management System---------------------------------" << '\n';
 
-        do {
-            cout << "> "; cin >> inputNumber; cout << '\n';
+    do {
+        cout << "> "; cin >> inputNumber; cout << '\n';
             switch (inputNumber) {
                 case 0:
                     helpSystem();
@@ -208,13 +196,13 @@ void editBookInfo(Book& book) {
                     addBook(book, stringToSerial, serialToString);
                     break;
                 case 2:
-                    searchSystem(stringToSerial, serialToString);
+                   // searchSystem(stringToSerial, serialToString);
                     break;
                 case 3:
                     editBookInfo(book);
                     break;
                 case 4:
-                    readBook();
+                    readBook(book, inputString, inputNumber, stringToSerial, serialToString);
                     break;
                 default:
                     //invalidSystem();
@@ -222,6 +210,5 @@ void editBookInfo(Book& book) {
             }
 
         } while (inputNumber != 5);
-
-        return 0;
-    }
+            return 0;
+}
