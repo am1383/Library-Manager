@@ -7,8 +7,7 @@
     class Book {
 
     private:
-        string bookName;
-        string authorBook;
+        string bookName, bookDetails, authorBook;
         int serialNumber;
 
     public:
@@ -18,6 +17,10 @@
 
         string getAuthorBook() const {
             return authorBook;
+        }
+
+        string getBookDetails () const {
+            return bookDetails;
         }
 
         int getSerialNumber() const {
@@ -35,14 +38,19 @@
         void setSerialNumber(const int& serialNumberR) {
             serialNumber = serialNumberR;
         }
+
+        void setBookDetails (const string& bookDetailsR) {
+            bookDetails = bookDetailsR;
+        }
     };
 
-    string toLowerString(string& inputString) {
-        for (int i = 0; i < inputString.size(); i++) {
-            inputString[i] = tolower(inputString[i]);
-        }
-        return inputString;
+std::string toLowerCharAtIndex(const std::string& inputString, int index) {
+    std::string result = inputString; // Make a copy of the input string
+    if (index >= 0 && index < result.length()) {
+        result[index] = std::tolower(result[index]); // Convert the character at the specified index to lowercase
     }
+    return result;
+}
 
     void setMap(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, const string& bookRec, const int& serialNumber) {
         serialToString[serialNumber] = bookRec;
@@ -53,6 +61,7 @@
         ofstream outPutFile(book.getBookName() + " Book.txt");
         if (outPutFile.is_open()) {
             outPutFile << book.getBookName() << '\n';
+            outPutFile << book.getBookDetails() << '\n';
             outPutFile << book.getAuthorBook() << '\n';
             outPutFile << book.getSerialNumber() << '\n';
 
@@ -95,7 +104,7 @@
         string inputSearchName;
         cout << "Please Enter Book Name: "; cin >> inputSearchName;
 
-        toLowerString(inputSearchName);
+        //toLowerString(inputSearchName);
 
         if (stringToSerial.find(inputSearchName) != stringToSerial.end()) {
             cout << "Book Found Successfully!" << '\n';
@@ -127,17 +136,18 @@
         int inputID;
 
         cout << "> Add Book Page" << '\n' << '\n';
-        
+
         cout << "Please Enter Book Name: "; cin >> inputString;
-    
+
         while (checkValidationString(stringToSerial, inputString)) {
             cout << "This Book Name Is Already Exist, Please Enter Another Book Name" << '\n';
             cout << "Please Enter Another Book Name: "; cin >> inputString; cout << '\n';
         }
-        
+
         book.setBookName(inputString);
 
         cout << "Please Enter Author Book Name: "; cin >> inputString; book.setAuthorBook(inputString);
+        cout << "Please Enter Book Details : "; cin >> inputString; book.setBookDetails(inputString);
         cout << "Please Enter Book Serial Number: "; cin >> inputID;
 
         while (checkValidationID(serialToString, inputID)) {
@@ -150,13 +160,32 @@
         saveBook(stringToSerial, serialToString, book);
     }
 
+void editBookInfo(Book& book) {
+    string inputString;
+    string tempInput = book.getBookDetails();
+
+    cout << "Please Enter New Book Details: ";
+    cin >> inputString;
+
+    inputString.resize(inputString.length());
+
+    for (int i = 0; i < inputString.length(); i++) {
+        if (tempInput[i] != inputString[i]) {
+            inputString[i] = tolower(inputString[i]);
+        }
+    }
+
+    cout << " New Details Book :" << inputString << '\n';
+    book.setBookDetails(inputString);
+}
+
     void helpSystem() {
         cout << "> Help Page      "  << '\n' << '\n';
         cout << "0 -> Help System "  << '\n';
         cout << "1 -> Adding Book "  << '\n';
         cout << "2 -> Reading Book"  << '\n';
-        cout << "3 -> Edit Book "    << '\n';
-        cout << "4 -> Admin Panel"   << '\n';
+        cout << "3 -> Edit Book   "  << '\n';
+        cout << "4 -> Admin Panel "  << '\n';
     }
 
     int main() {
@@ -165,6 +194,7 @@
 
         Book book;
         int inputNumber;
+        string inputString;
 
         cout << "---------------------------------Book Management System---------------------------------" << '\n';
 
@@ -181,10 +211,10 @@
                     searchSystem(stringToSerial, serialToString);
                     break;
                 case 3:
-                    //editBook();
+                    editBookInfo(book);
                     break;
                 case 4:
-                    // adminPanel();
+                    readBook();
                     break;
                 default:
                     //invalidSystem();
