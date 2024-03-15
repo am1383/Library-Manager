@@ -31,6 +31,22 @@ class Book {
         void setBookDetails (const string& bookDetailsR) {bookDetails = bookDetailsR;}
 };
 
+void checkMapFromFile (map<string, int>& stringToSerial, map<int, string>& serialToString) {
+    ifstream file("map.txt");
+
+    if (file.good()) {
+
+    } else {
+        ofstream createFile("map.txt");
+        if (createFile.is_open()) {
+                createFile.close();
+
+        } else {
+            cout << "Unable To Open File, Please Contact Developers !" << '\n';
+        }
+    }
+}
+//Function to save contents in map file
 void saveMapToFile(const map<string, int>& stringToSerial, const map<int, string>& serialToString) {
     ofstream outPutFile("map.txt");
     if (outPutFile.is_open()) {
@@ -42,7 +58,7 @@ void saveMapToFile(const map<string, int>& stringToSerial, const map<int, string
         }
         outPutFile.close();
     } else {
-        cout << "Unable to open file to save map data." << '\n';
+        cout << "Unable to open file to save map data, Please Contact Developers !" << '\n';
     }
 }
 
@@ -54,9 +70,11 @@ void loadMapFromFile(map<string, int>& stringToSerial, map<int, string>& serialT
         int value;
         while (inputFile >> key >> value) {
             stringToSerial[key] = value;
+            serialToString[value] = key;
         }
         while (inputFile >> value >> key) {
             serialToString[value] = key;
+            stringToSerial[key] = value;
         }
         inputFile.close();
     } else {
@@ -208,11 +226,13 @@ inline void helpSystem() {
 int main() {
     map<string, int> stringToSerial;
     map<int, string> serialToString;
+
+    checkMapFromFile(stringToSerial, serialToString);
     loadMapFromFile(stringToSerial, serialToString);
 
     Book book;
-    int inputNumber(0);
-    string inputString("");
+    int inputNumber;
+    string inputString;
 
     cout << "---------------------------------Book Management System---------------------------------" << '\n';
 
