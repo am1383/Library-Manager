@@ -84,7 +84,7 @@ void saveMapToFile(const map<string, int>& stringToSerial, const map<int, string
     }
 }
 
-void removeFromMapFile(const string& keyToRemove) {
+void removeFromMapFile(const string& keyToRemove, map<string, int>& stringToSerial, map<int, string>& serialToString) {
     // Create a temporary map to store contents of the file
     map<string, int> tempStringToSerial;
     map<int, string> tempSerialToString;
@@ -102,25 +102,24 @@ void removeFromMapFile(const string& keyToRemove) {
         }
         inFile.close();
 
-        saveMapToFile(tempStringToSerial, tempSerialToString);
+        // Write data back to the file excluding the key to remove
+        ofstream outFile("map.txt");
+        if (outFile.is_open()) {
+            for (const auto& pair : tempStringToSerial) {
+                outFile << pair.first << " " << pair.second << '\n';
+            }
+            for (const auto& pair : tempSerialToString) {
+                outFile << pair.first << " " << pair.second << '\n';
+            }
+            outFile.close();
+            stringToSerial = tempStringToSerial;
+            serialToString = tempSerialToString;
+        } else {
+            cout << "Unable to open file to write map data, Please Contact Developers !" << '\n';
+        }
     } else {
         cout << "Unable to open file to read map data, Please Contact Developers !" << '\n';
         return;
-    }
-
-    // Write data back to the file excluding the key to remove
-    ofstream outFile("map.txt");
-    if (outFile.is_open()) {
-        for (const auto& pair : tempStringToSerial) {
-            outFile << pair.first << " " << pair.second << '\n';
-        }
-        for (const auto& pair : tempSerialToString) {
-            outFile << pair.first << " " << pair.second << '\n';
-        }
-        outFile.close();
-        //cout << "Key '" << keyToRemove << "' removed from map file." << endl;
-    } else {
-        cout << "Unable to open file to write map data, Please Contact Developers !" << '\n';
     }
 }
 
@@ -269,7 +268,7 @@ void deleteBook (map<string, int>& stringToSerial, map<int, string>& serialToStr
     if (remove(fileName.c_str())) {
             cout << "Error Deleting File, Please Contact Developers !" << '\n';
         } else {
-            removeFromMapFile(bookName);
+            removeFromMapFile(bookName, stringToSerial, serialToString);
             cout << "Book Successfully Deleted Form Library" << '\n';
     }
 }
