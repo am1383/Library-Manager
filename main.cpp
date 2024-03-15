@@ -88,6 +88,14 @@ void setMap(map<string, int>& stringToSerial, map<int, string>& serialToString, 
     saveMapToFile(stringToSerial, serialToString);
     }
 
+//inline int getMapID (map<string, int>& stringToSerial, const string& inputString) {
+  //  return stringToSerial[inputString];
+//}
+
+string getMapString (map<int, string>& serialToSring, const int& inputID) {
+    return serialToSring[inputID];
+}
+
 void saveBook(map<string, int>& stringToSerial, map<int, string>& serialToString, Book& book) {
     ofstream outPutFile(book.getBookName() + " Book.txt");
     if (outPutFile.is_open()) {
@@ -105,11 +113,12 @@ void saveBook(map<string, int>& stringToSerial, map<int, string>& serialToString
         }
 }
 
-void openBook(Book& book) {
-    ifstream inputFile(book.getBookName() + " Book.txt");
+void openBook(const string& inputBookName) {
+
+    ifstream inputFile(inputBookName + " Book.txt");
     if (inputFile.is_open()) {
         string line;
-        cout << book.getBookName() + " Book Details :" << '\n';
+        cout << inputBookName + " Book Details :" << '\n';
 
     while (getline(inputFile, line)) {
         istringstream iss(line);
@@ -121,7 +130,7 @@ void openBook(Book& book) {
         }
         cout << '\n';
     } else {
-        cout << "Unable To Open File, Please Contact Developers!" << '\n';
+        cout << "Unable To Open Book File, Please Contact Developers!" << '\n';
     }
 }
 
@@ -194,7 +203,7 @@ void readBook (Book& book, string& inputString, int& inputNumber, map<string, in
         case 1:
             cout << "Please Enter Book ID : "; cin >> inputNumber; cout << '\n';
             if(checkValidationID(serialToString, stringToSerial, inputNumber)) {
-                openBook(book);
+                openBook(getMapString(serialToString, inputNumber));
             } else {
                 cout << "This Book Is Not Available, Please Try Again" << '\n';
             }
@@ -203,9 +212,9 @@ void readBook (Book& book, string& inputString, int& inputNumber, map<string, in
         case 2:
             cout << "Please Enter Book Name : "; cin >> inputString;
             if(checkValidationString(stringToSerial, serialToString, inputString)) {
-                openBook(book);
+                openBook(inputString);
             }
-
+            break;
         default:
             cout << "Invalid Command, Please Try Again !" << '\n';
             break;
@@ -259,6 +268,6 @@ int main() {
                     break;
             }
 
-        } while (inputNumber != 5);
+        } while (true);
             return 0;
 }
