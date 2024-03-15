@@ -73,16 +73,23 @@ class Book {
 
         if (inputFile.is_open()) {
             string line;
-            while (getline(inputFile, line)) {
-                cout << line <<'\n' << '\n';
+            cout << book.getBookName() + " Book Details :" << '\n';
+
+        while (getline(inputFile, line)) {
+            istringstream iss(line);
+            string token;
+
+        while (getline(iss, token, ',')) {
+            cout << token << '\n';
+                }
             }
-            inputFile.close();
+            cout << '\n';
         } else {
             cout << "Unable To Open File, Please Contact Developers!" << '\n';
         }
     }
 
-    bool checkValidationID (unordered_map<int , string>& serialToString, const int& numberRecieve) {
+    bool checkValidationID (unordered_map<int, string>& serialToString, const int& numberRecieve) {
         if (serialToString[numberRecieve] == "") {
             return 0;
         }
@@ -148,7 +155,7 @@ class Book {
 
         switch (inputNumber) {
         case 1:
-            cout << "Please Enter Book ID : "; cin >> inputNumber;
+            cout << "Please Enter Book ID : "; cin >> inputNumber; cout << '\n';
             if(checkValidationID(serialToString, inputNumber)) {
                 openBook(book);
             } else {
@@ -184,7 +191,7 @@ int main() {
     int inputNumber(0);
     string inputString("");
 
-    cout << setw(50) << "---------------------------------Book Management System---------------------------------" << '\n';
+    cout << "---------------------------------Book Management System---------------------------------" << '\n';
 
     do {
         cout << "> "; cin >> inputNumber; cout << '\n';
