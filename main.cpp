@@ -261,9 +261,22 @@ void readBook (string& inputString, int& inputNumber, map<string, int>& stringTo
 }
 
 void deleteBook (map<string, int>& stringToSerial, map<int, string>& serialToString, string& bookName) {
-
-    cout << "Please Enter Book Name: "; cin >> bookName;
-    string fileName = bookName + " Book.txt";
+    int inputNumber;
+    string fileName;
+    cout << "Please Choose Your Selection: "; cin >> inputNumber;
+    switch (inputNumber) {
+    case 1:
+        cout << "Please Enter Book ID: "; cin >> inputNumber;
+        bookName = getMapString(serialToString, inputNumber);
+        fileName = bookName + " Book.txt";
+        break;
+    case 2:
+        cout << "Please Enter Book Name: "; cin >> bookName;
+        fileName = bookName + " Book.txt";
+    default:
+        cout << "Invalid Key, Please Try Again !" << '\n';
+        break;
+    }
 
     if (remove(fileName.c_str())) {
             cout << "Error Deleting File, Please Contact Developers !" << '\n';
