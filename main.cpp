@@ -262,6 +262,7 @@ void addBook(Book& book, map<string, int>& stringToSerial, map<int, string>& ser
 void editBookInfo(map<string, int>& stringToSerial, map<int, string>& serialToString, Book& book) {
     string inputString, tempInput;
 
+    cout << "> Edit Book Information" << '\n' << '\n';
     cout << "Please Enter Book Name: "; cin >> tempInput;
 
     while(!checkValidationString(stringToSerial, serialToString, tempInput)) {
@@ -275,9 +276,12 @@ void editBookInfo(map<string, int>& stringToSerial, map<int, string>& serialToSt
 
 }
 
-void readBook (string& inputString, int& inputNumber, map<string, int>& stringToSerial, map<int, string>& serialToString) {
-    cout << "Please Enter Choose Search Selection: "; cin >> inputNumber;
+void readBook (map<string, int>& stringToSerial, map<int, string>& serialToString) {
+    int inputNumber;
+    string inputString;
 
+    cout << "> Read Book" << '\n' << '\n';
+    cout << "Please Enter Choose Search Selection: "; cin >> inputNumber;
     switch (inputNumber) {
     case 1:
         cout << "Please Enter Book ID: "; cin >> inputNumber; cout << '\n';
@@ -300,9 +304,11 @@ void readBook (string& inputString, int& inputNumber, map<string, int>& stringTo
     }
 }
 
-void deleteBook (map<string, int>& stringToSerial, map<int, string>& serialToString, string& bookName) {
+void deleteBook (map<string, int>& stringToSerial, map<int, string>& serialToString) {
     int inputNumber;
-    string fileName;
+    string fileName, bookName;
+    
+    cout << "> Delete Book" << '\n' << '\n';
     cout << "Please Choose Your Selection: "; cin >> inputNumber;
     switch (inputNumber) {
     case 1:
@@ -363,20 +369,19 @@ int main() {
                     editBookInfo(stringToSerial, serialToString, book);
                     break;
                 case 3:
-                    readBook(inputString, inputNumber, stringToSerial, serialToString);
+                    readBook(stringToSerial, serialToString);
                     break;
                 case 4:
-                    deleteBook(stringToSerial, serialToString, inputString);
-                    break;
-                case 5:
-                    exit(1);
+                    deleteBook(stringToSerial, serialToString);
                     break;
                 default:
                     cout << "Invalid Command, Please Try Again!" << '\n';
                     break;
             }
 
-        } while (true);
+        } while (inputNumber != 5); {
+            cout << "C++ Beginning Project Created By Amir Mohammad Mousavi";
+        }
 
              return 0;
 }
