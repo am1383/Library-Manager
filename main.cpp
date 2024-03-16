@@ -1,5 +1,6 @@
 #include <iostream>
 #include <iomanip>
+#include <vector>
 #include <fstream>
 #include <map>
 
@@ -45,6 +46,49 @@ void checkMapFromFile (map<string, int>& stringToSerial, map<int, string>& seria
             cout << "Unable To Open Map File, Please Contact Developers !" << '\n';
         }
     }
+}
+
+void replaceLine(const string& filename, int lineNumber, const string& newText) {
+    ifstream inFile(filename); // باز کردن فایل برای خواندن
+
+    if (!inFile) {
+        cerr << "Unable to open file: " << filename << endl;
+        return;
+    }
+
+    vector<string> lines;
+    string line;
+
+    // خواندن فایل خط به خط
+    while (getline(inFile, line)) {
+        lines.push_back(line);
+    }
+
+    inFile.close();
+
+    // جایگزین کردن متن جدید در خط مورد نظر
+    if (lineNumber < 1 || lineNumber > lines.size()) {
+        cerr << "Invalid line number" << endl;
+        return;
+    }
+
+    lines[lineNumber - 1] = newText;
+
+    // باز کردن فایل برای نوشتن و نوشتن خطوط باقی‌مانده
+    ofstream outFile(filename);
+
+    if (!outFile) {
+        cerr << "Unable to open file: " << filename << endl;
+        return;
+    }
+
+    for (const string& l : lines) {
+        outFile << l << endl;
+    }
+
+    outFile.close();
+
+    cout << "Line " << lineNumber << " replaced with: " << newText << endl;
 }
 
 // Function to load map contents from a file
@@ -141,8 +185,8 @@ void saveBook(map<string, int>& stringToSerial, map<int, string>& serialToString
     ofstream outPutFile(book.getBookName() + " Book.txt");
     if (outPutFile.is_open()) {
         outPutFile << book.getBookName() << '\n';
-        outPutFile << book.getBookDetails() << '\n';
         outPutFile << book.getAuthorBook() << '\n';
+        outPutFile << book.getBookDetails() << '\n';
         outPutFile << book.getSerialNumber() << '\n';
         outPutFile.close();
 
@@ -217,22 +261,20 @@ void addBook(Book& book, map<string, int>& stringToSerial, map<int, string>& ser
     saveBook(stringToSerial, serialToString, book);
 }
 
-void editBookInfo(Book& book) {
-    string inputString;
-    string tempInput = book.getBookDetails();
+void editBookInfo(map<string, int>& stringToSerial, map<int, string>& serialToString, Book& book) {
+    string inputString, tempInput;
 
-    cout << "Please Enter New Book Details: "; cin >> inputString;
+    cout << "Please Enter Book Name: "; cin >> tempInput;
 
-    inputString.resize(inputString.length());
-    // New change in book details will change to lower case
-    for (int i=0; i < inputString.length(); i++) {
-        if (tempInput[i] != inputString[i]) {
-            inputString[i] = tolower(inputString[i]);
-        }
+    while(!checkValidationString(stringToSerial, serialToString, tempInput)) {
+        cout << "Invalid Book Name, Please Try Again !" << '\n';
+        cout << "Please Enter New Book Name: "; cin >> tempInput;
     }
+        cout << "Please Enter New Book Details: "; cin >> inputString;
+        book.setBookDetails(inputString);
+        tempInput = tempInput + " Book.txt";
+        replaceLine(tempInput, 3, inputString);
 
-    cout << "New Details Book:" << inputString << '\n';
-    book.setBookDetails(inputString);
 }
 
 void readBook (string& inputString, int& inputNumber, map<string, int>& stringToSerial, map<int, string>& serialToString) {
@@ -320,7 +362,7 @@ int main() {
                     addBook(book, stringToSerial, serialToString);
                     break;
                 case 2:
-                    editBookInfo(book);
+                    editBookInfo(stringToSerial, serialToString, book);
                     break;
                 case 3:
                     readBook(inputString, inputNumber, stringToSerial, serialToString);
