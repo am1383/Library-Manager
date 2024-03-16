@@ -49,36 +49,33 @@ void checkMapFromFile (map<string, int>& stringToSerial, map<int, string>& seria
 }
 
 void replaceLine(const string& filename, int lineNumber, const string& newText) {
-    ifstream inFile(filename); // باز کردن فایل برای خواندن
+    ifstream inFile(filename);
 
     if (!inFile) {
-        cerr << "Unable to open file: " << filename << endl;
+        cout << "Unable to open file, Please Contact Developers !" << '\n';
         return;
     }
 
     vector<string> lines;
     string line;
 
-    // خواندن فایل خط به خط
     while (getline(inFile, line)) {
         lines.push_back(line);
     }
 
     inFile.close();
 
-    // جایگزین کردن متن جدید در خط مورد نظر
     if (lineNumber < 1 || lineNumber > lines.size()) {
-        cerr << "Invalid line number" << endl;
+        cout << "Invalid Line Number, Please Try Again !" << '\n';
         return;
     }
 
     lines[lineNumber - 1] = newText;
 
-    // باز کردن فایل برای نوشتن و نوشتن خطوط باقی‌مانده
     ofstream outFile(filename);
 
     if (!outFile) {
-        cerr << "Unable to open file: " << filename << endl;
+        cout << "Unable to open file, Please Contact Developers !" << '\n';
         return;
     }
 
@@ -88,7 +85,7 @@ void replaceLine(const string& filename, int lineNumber, const string& newText) 
 
     outFile.close();
 
-    cout << "Line " << lineNumber << " replaced with: " << newText << endl;
+    cout << "Book Details Updated Succesfuly !" << '\n';
 }
 
 // Function to load map contents from a file
@@ -194,7 +191,7 @@ void saveBook(map<string, int>& stringToSerial, map<int, string>& serialToString
 
         cout << "Book Added To Library Successfully!" << '\n';
         } else {
-            cout << "Unable To Open File, Please Contact Developers!" << '\n';
+            cout << "Unable To Add Book To Library, Please Contact Developers!" << '\n';
     }
 }
 
@@ -220,6 +217,7 @@ void openBook(const string& inputBookName) {
 }
 
 bool checkValidationID (map<int, string>& serialToString, map<string, int>& stringToSerial, const int& numberRecieve) {
+    loadMapFromFile(stringToSerial, serialToString);
     if (serialToString[numberRecieve] == "") {
         return 0;
     }
@@ -321,7 +319,7 @@ void deleteBook (map<string, int>& stringToSerial, map<int, string>& serialToStr
     }
 
     if (remove(fileName.c_str())) {
-            cout << "Error Deleting File, Please Contact Developers !" << '\n';
+            cout << "Error Deleting Book, Please Contact Developers !" << '\n';
         } else {
             removeFromMapFile(bookName, stringToSerial, serialToString);
             cout << "Book Successfully Deleted Form Library" << '\n';
