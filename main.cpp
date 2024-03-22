@@ -200,7 +200,7 @@ void openBook(const string& inputBookName) {
     ifstream inputFile(inputBookName + " Book.txt");
     if (inputFile.is_open()) {
         string line;
-        
+
     while (getline(inputFile, line)) {
         istringstream iss(line);
         string token;
@@ -233,7 +233,7 @@ bool checkValidationString (map<string, int>& stringToSerial, map<int, string>& 
 }
 
 void addBook(Book& book, map<string, int>& stringToSerial, map<int, string>& serialToString) {
-    string inputString;
+    string inputString, test;
     int inputID;
 
     cout << "> Add Book Page" << '\n' << '\n';
@@ -247,7 +247,8 @@ void addBook(Book& book, map<string, int>& stringToSerial, map<int, string>& ser
     book.setBookName(inputString);
 
     cout << "Please Enter Author Book Name: "; cin >> inputString; book.setAuthorBook(inputString);
-    cout << "Please Enter Book Details: "; cin >> inputString; book.setBookDetails(inputString);
+    cin.ignore();
+    cout << "Please Enter Book Details: "; getline(cin, inputString); book.setBookDetails(inputString);
     cout << "Please Enter Book Serial Number: "; cin >> inputID;
 
     while (checkValidationID(serialToString, stringToSerial, inputID)) {
@@ -307,7 +308,7 @@ void readBook (map<string, int>& stringToSerial, map<int, string>& serialToStrin
 void deleteBook (map<string, int>& stringToSerial, map<int, string>& serialToString) {
     int inputNumber;
     string fileName, bookName;
-    
+
     cout << "> Delete Book" << '\n' << '\n';
     cout << "Please Choose Your Selection: "; cin >> inputNumber;
     switch (inputNumber) {
@@ -352,8 +353,7 @@ int main() {
 
     Book book;
     int inputNumber;
-    string inputString;
-
+    
     cout << "---------------------------------Book Management System---------------------------------" << '\n';
 
     do {
@@ -383,5 +383,5 @@ int main() {
             cout << "C++ Beginning Project Created By Amir Mohammad Mousavi";
         }
 
-             return 0;
+        return 0;
 }
