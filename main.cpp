@@ -205,12 +205,13 @@ void openBook(const string& inputBookName) {
     while (getline(inputFile, line)) {
         istringstream iss(line);
         string token;
-
+        cout << " > Book Information" << '\n';
     while (getline(iss, token, ',')) {
         cout << token << '\n';
             }
         }
         cout << '\n';
+        inputFile.close();
     } else {
         cout << "This Book Is Not Available, Please Try Another Book !" << '\n';
     }
