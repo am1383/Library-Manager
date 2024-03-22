@@ -181,10 +181,10 @@ string getMapString (map<int, string>& serialToSring, const int& inputID) {
 void saveBook(map<string, int>& stringToSerial, map<int, string>& serialToString, Book& book) {
     ofstream outPutFile(book.getBookName() + " Book.txt");
     if (outPutFile.is_open()) {
-        outPutFile << book.getBookName() << '\n';
-        outPutFile << book.getAuthorBook() << '\n';
-        outPutFile << book.getBookDetails() << '\n';
-        outPutFile << book.getSerialNumber() << '\n';
+        outPutFile << "Book Name: " + book.getBookName() << '\n';
+        outPutFile << "Book Author: " + book.getAuthorBook() << '\n';
+        outPutFile << "Book Details: " + book.getBookDetails() << '\n';
+        outPutFile << "Book ID: " << book.getSerialNumber() << '\n';
         outPutFile.close();
 
         setMap(stringToSerial, serialToString, book.getBookName(), book.getSerialNumber());
@@ -200,12 +200,11 @@ void openBook(const string& inputBookName) {
     ifstream inputFile(inputBookName + " Book.txt");
     if (inputFile.is_open()) {
         string line;
-        cout << inputBookName + " Book Details: " << '\n';
-
+        
     while (getline(inputFile, line)) {
         istringstream iss(line);
         string token;
-        cout << " > Book Information" << '\n';
+
     while (getline(iss, token, ',')) {
         cout << token << '\n';
             }
