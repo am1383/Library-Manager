@@ -30,7 +30,7 @@ void replaceLine(const string& filename, int lineNumber, const string& newText) 
     ifstream inFile(filename);
 
     if (!inFile) {
-        cout << "Unable to open file, Please Contact Developers !" << '\n';
+        cout << "Unable To Open Book File, Please Contact Developers !" << '\n';
         return;
     }
 
@@ -53,7 +53,7 @@ void replaceLine(const string& filename, int lineNumber, const string& newText) 
     ofstream outFile(filename);
 
     if (!outFile) {
-        cout << "Unable to open file, Please Contact Developers !" << '\n';
+        cout << "Unable To Open Book File, Please Contact Developers !" << '\n';
         return;
     }
 
@@ -63,10 +63,10 @@ void replaceLine(const string& filename, int lineNumber, const string& newText) 
 
     outFile.close();
 
-    cout << "Book Details Updated Succesfuly !" << '\n';
+    cout << "Book Details Updated Successfully !" << '\n';
 }
 
-// Function to load unordered_map contents from a file
+// Function to load Map contents from a file
 void loadunordered_mapFromFile(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
     ifstream file("map.txt");
 
@@ -78,7 +78,7 @@ void loadunordered_mapFromFile(unordered_map<string, int>& stringToSerial, unord
                 createFile.close();
 
         } else {
-            cout << "Unable To Open unordered_map File, Please Contact Developers !" << '\n';
+            cout << "Unable To Open Map File, Please Contact Developers !" << '\n';
         }
     }
     ifstream inputFile("map.txt");
@@ -95,11 +95,11 @@ void loadunordered_mapFromFile(unordered_map<string, int>& stringToSerial, unord
         }
         inputFile.close();
     } else {
-        cout << "Unable to open file to load unordered_map data, Please Contact Developers !" << '\n';
+        cout << "Unable To Open File To Load Map Data, Please Contact Developers !" << '\n';
     }
 }
 
-//Function to save contents in unordered_map file
+//Function to save contents in Map file
 void saveunordered_mapToFile(const unordered_map<string, int>& stringToSerial, const unordered_map<int, string>& serialToString) {
     ifstream file("map.txt");
 
@@ -162,10 +162,10 @@ void removeFromunordered_mapFile(const string& keyToRemove, unordered_map<string
             stringToSerial = tempStringToSerial;
             serialToString = tempSerialToString;
         } else {
-            cout << "Unable to open file to write unordered_map data, Please Contact Developers !" << '\n';
+            cout << "Unable To Open File To Write Map data, Please Contact Developers !" << '\n';
         }
     } else {
-        cout << "Unable to open file to read unordered_map data, Please Contact Developers !" << '\n';
+        cout << "Unable To Open File To Read Map, Please Contact Developers !" << '\n';
         return;
     }
 }
@@ -305,7 +305,7 @@ void readBook (unordered_map<string, int>& stringToSerial, unordered_map<int, st
                 openBook(inputString);
             }
             break;
-            
+
         default:
             cout << "Invalid Command, Please Try Again !" << '\n';
             break;
@@ -336,18 +336,19 @@ void deleteBook (unordered_map<string, int>& stringToSerial, unordered_map<int, 
             cout << "Error Deleting Book, Please Contact Developers !" << '\n';
         } else {
             removeFromunordered_mapFile(bookName, stringToSerial, serialToString);
-            cout << "Book Successfully Deleted Form Library" << '\n';
+            cout << "Book Successfully Deleted Form Library !" << '\n';
     }
 }
 
 void helpSystem() {
-    cout << "> Help Page" << '\n' << '\n';
-    cout << "0 -> Help System" << '\n';
-    cout << "1 -> Add Book" << '\n';
-    cout << "2 -> Search Book" << '\n';
-    cout << "3 -> Edit Book" << '\n';
-    cout << "4 -> Read Book" << '\n';
-    cout << "5 -> Exit" << '\n';
+
+    cout << "> Help Page\n\n"
+         << "0 -> Help System\n"
+         << "1 -> Add Book\n"
+         << "2 -> Search Book\n"
+         << "3 -> Edit Book\n"
+         << "4 -> Read Book\n"
+         << "5 -> Exit\n";
 }
 
 
@@ -377,6 +378,9 @@ int main() {
                     break;
                 case 4:
                     deleteBook(stringToSerial, serialToString);
+                    break;
+                case 5:
+                    // Exit case
                     break;
                 default:
                     cout << "Invalid Command, Please Try Again!" << '\n';
