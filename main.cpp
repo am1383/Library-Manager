@@ -370,10 +370,18 @@ void deleteBook (unordered_map<string, int>& stringToSerial, unordered_map<int, 
         }
 
     if (remove(fileName.c_str())) {
-            cout << "Error Deleting Book, Please Contact Developers !" << '\n';
+            cout << "Book Name Is Not Exist, Please Try Again !" << '\n';
         } else {
             removeFromunordered_mapFile(bookName, stringToSerial, serialToString);
-            cout << "Book Successfully Deleted Form Library !" << '\n';
+            cout << "Book " << bookName << " Successfully Deleted Form Library !" << '\n';
+    }
+}
+
+//Function for print all bookName stored in files
+void printAllBooks(const unordered_map<int, string>& serialToString) {
+    cout << "> List of all books in the library:" << '\n';
+    for (const auto& pair : serialToString) {
+        cout << "Book Name: " << pair.second << '\n';
     }
 }
 
@@ -382,16 +390,19 @@ void helpSystem() {
     cout << "> Help Page\n\n"
          << "0 -> Help System\n"
          << "1 -> Add Book\n"
-         << "2 -> Search Book\n"
-         << "3 -> Edit Book\n"
-         << "4 -> Read Book\n"
-         << "5 -> Exit\n";
+         << "2 -> Edit Book\n"
+         << "3 -> Read Book\n"
+         << "4 -> Delete Book\n"
+         << "5 -> Print All Book\n"
+         << "6 -> Exit\n";
 }
 
 
 int main() {
     unordered_map<string, int> stringToSerial;
     unordered_map<int, string> serialToString;
+
+    loadunordered_mapFromFile(stringToSerial, serialToString);
 
     Book book;
     int inputNumber;
@@ -417,14 +428,17 @@ int main() {
                     deleteBook(stringToSerial, serialToString);
                     break;
                 case 5:
-                    // Exit case
+                    printAllBooks(serialToString);
+                    break;
+                case 6:
+                    // Exit Case
                     break;
                 default:
                     cout << "Invalid Command, Please Try Again!" << '\n';
                     break;
             }
 
-        } while (inputNumber != 5); {
+        } while (inputNumber != 6); {
             cout << "C++ Beginning Project Created By Amir Mohammad Mousavi - 1401 Bu-Ali University";
     }
         return 0;
