@@ -26,7 +26,44 @@ public:
     void setBookDetails (const string& bookDetailsR) {bookDetails = bookDetailsR;}
 };
 
-void replaceLine(const string& filename, int lineNumber, const string& newText) {
+//Function to check files changes
+bool hasFileChanged() {
+  static unordered_map<string, long> fileSizes; // Cache file sizes
+
+  // Check if file exists in cache
+  if (fileSizes.count("map.txt") > 0) {
+    // Get file size
+    ifstream file("map.txt");
+    if (file.good()) {
+      file.seekg(0, ios::end);
+      long currentSize = file.tellg();
+
+      // Compare sizes and update cache if changed
+      if (currentSize != fileSizes["map.txt"]) {
+        fileSizes["map.txt"] = currentSize;
+        return true;
+      }
+      return false;
+    } else {
+      // Handle error opening file
+      return false; // Consider throwing an exception for better error handling
+    }
+  } else {
+    // Get file size for the first time
+    ifstream file("map.txt");
+    if (file.good()) {
+      file.seekg(0, ios::end);
+      long currentSize = file.tellg();
+      fileSizes["map.txt"] = currentSize;
+      return false;
+    } else {
+      // Handle error opening file
+      return false; // Consider throwing an exception for better error handling
+    }
+  }
+}
+
+void replaceLine(const string& filename, const int& lineNumber, const string& newText) {
     ifstream inFile(filename);
 
     if (!inFile) {
@@ -389,7 +426,6 @@ int main() {
 
         } while (inputNumber != 5); {
             cout << "C++ Beginning Project Created By Amir Mohammad Mousavi - 1401 Bu-Ali University";
-        }
-
+    }
         return 0;
 }
