@@ -275,8 +275,8 @@ bool checkValidationString (unordered_map<string, int>& stringToSerial, unordere
     return 1;
 }
 
-void addBook(Book& book, unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
-    string inputString, test;
+void addBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, Book& book) {
+    string inputString;
     int inputID;
 
     cout << "> Add Book Page" << '\n' << '\n';
@@ -373,16 +373,22 @@ void deleteBook (unordered_map<string, int>& stringToSerial, unordered_map<int, 
             cout << "Book Name Is Not Exist, Please Try Again !" << '\n';
         } else {
             removeFromunordered_mapFile(bookName, stringToSerial, serialToString);
-            cout << "Book " << bookName << " Successfully Deleted Form Library !" << '\n';
+            cout << "Book " << bookName << " Successfully Deleted Fromm Library !" << '\n';
     }
 }
 
 //Function for print all bookName stored in files
-void printAllBooks(const unordered_map<int, string>& serialToString) {
+void printAllBooks(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
+    bool flagFile = hasFileChanged();
+    if (flagFile) {
+        loadunordered_mapFromFile(stringToSerial, serialToString);
+    }
     cout << "> List of all books in the library:" << '\n';
+
     for (const auto& pair : serialToString) {
         cout << "Book Name: " << pair.second << '\n';
     }
+
 }
 
 void helpSystem() {
@@ -404,6 +410,7 @@ int main() {
 
     loadunordered_mapFromFile(stringToSerial, serialToString);
 
+
     Book book;
     int inputNumber;
 
@@ -416,7 +423,7 @@ int main() {
                     helpSystem();
                     break;
                 case 1:
-                    addBook(book, stringToSerial, serialToString);
+                    addBook(stringToSerial, serialToString, book);
                     break;
                 case 2:
                     editBookInfo(stringToSerial, serialToString, book);
@@ -428,7 +435,7 @@ int main() {
                     deleteBook(stringToSerial, serialToString);
                     break;
                 case 5:
-                    printAllBooks(serialToString);
+                    printAllBooks(stringToSerial, serialToString);
                     break;
                 case 6:
                     // Exit Case
