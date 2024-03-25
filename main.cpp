@@ -118,6 +118,9 @@ void loadunordered_mapFromFile(unordered_map<string, int>& stringToSerial, unord
             cout << "Unable To Open Map File, Please Contact Developers !" << '\n';
         }
     }
+
+    bool flagFile = hasFileChanged();
+    if (flagFile) {
     ifstream inputFile("map.txt");
     if (inputFile.is_open()) {
         string key;
@@ -131,8 +134,10 @@ void loadunordered_mapFromFile(unordered_map<string, int>& stringToSerial, unord
             stringToSerial[key] = value;
         }
         inputFile.close();
+
     } else {
         cout << "Unable To Open File To Load Map Data, Please Contact Developers !" << '\n';
+        }
     }
 }
 
