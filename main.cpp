@@ -120,7 +120,7 @@ void loadunordered_mapFromFile(unordered_map<string, int>& stringToSerial, unord
     }
 
     bool flagFile = hasFileChanged();
-    if (flagFile) {
+    if (!flagFile) {
     ifstream inputFile("map.txt");
     if (inputFile.is_open()) {
         string key;
@@ -391,7 +391,7 @@ void printAllBooks(unordered_map<string, int>& stringToSerial, unordered_map<int
     cout << "> List of all books in the library:" << '\n';
 
     for (const auto& pair : serialToString) {
-        cout << "Book Name: " << pair.second << '\n';
+        cout << "Book Name: " << pair.second << " Book ID: " << pair.first << '\n';
     }
 
 }
@@ -414,7 +414,6 @@ int main() {
     unordered_map<int, string> serialToString;
 
     loadunordered_mapFromFile(stringToSerial, serialToString);
-
 
     Book book;
     int inputNumber;
