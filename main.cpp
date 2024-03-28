@@ -10,20 +10,23 @@ class Book {
 
 private:
     string bookName, bookDetails, authorBook;
+    bool soldStatus;
     int serialNumber;
 
 public:
-    Book() : bookName(""), bookDetails(""), authorBook(""), serialNumber(0) {}
+    Book() : bookName(""), bookDetails(""), authorBook(""), soldStatus(false), serialNumber(0) {}
 
     string getBookName() const {return bookName;}
     string getAuthorBook() const {return authorBook;}
-    string getBookDetails () const {return bookDetails;}
+    string getBookDetails() const {return bookDetails;}
+    bool getSoldStatus() const {return soldStatus;}
     int getSerialNumber() const {return serialNumber;}
 
     void setBookName(const string& bookNameR) {bookName = bookNameR;}
     void setAuthorBook(const string& authorBookR) {authorBook = authorBookR;}
+    void setBookDetails(const string& bookDetailsR) {bookDetails = bookDetailsR;}
     void setSerialNumber(const int& serialNumberR) {serialNumber = serialNumberR;}
-    void setBookDetails (const string& bookDetailsR) {bookDetails = bookDetailsR;}
+    void setSoldStatus(const bool& soldStatusR) {soldStatus = soldStatusR;}
 };
 
 //Function to check files changes
@@ -218,11 +221,11 @@ void setunordered_map(unordered_map<string, int>& stringToSerial, unordered_map<
     saveunordered_mapToFile(stringToSerial, serialToString);
 }
 
-int getunordered_mapID (unordered_map<string, int>& stringToSerial, const string& inputString) {
+int getunordered_mapID(unordered_map<string, int>& stringToSerial, const string& inputString) {
     return stringToSerial[inputString];
 }
 
-string getunordered_mapString (unordered_map<int, string>& serialToSring, const int& inputID) {
+string getunordered_mapString(unordered_map<int, string>& serialToSring, const int& inputID) {
     return serialToSring[inputID];
 }
 
@@ -232,6 +235,7 @@ void saveBook(unordered_map<string, int>& stringToSerial, unordered_map<int, str
         outPutFile << "Book Name: " + book.getBookName() << '\n';
         outPutFile << "Book Author: " + book.getAuthorBook() << '\n';
         outPutFile << "Book Details: " + book.getBookDetails() << '\n';
+        outPutFile << false << '\n';
         outPutFile << "Book ID: " << book.getSerialNumber() << '\n';
         outPutFile.close();
 
@@ -244,7 +248,6 @@ void saveBook(unordered_map<string, int>& stringToSerial, unordered_map<int, str
 }
 
 void openBook(const string& inputBookName) {
-
     ifstream inputFile(inputBookName + " Book.txt");
     if (inputFile.is_open()) {
         string line;
@@ -264,7 +267,7 @@ void openBook(const string& inputBookName) {
     }
 }
 
-bool checkValidationID (unordered_map<int, string>& serialToString, unordered_map<string, int>& stringToSerial, const int& numberRecieve) {
+bool checkValidationID(unordered_map<int, string>& serialToString, unordered_map<string, int>& stringToSerial, const int& numberRecieve) {
     loadunordered_mapFromFile(stringToSerial, serialToString);
     if (serialToString[numberRecieve] == "") {
         return 0;
@@ -272,7 +275,7 @@ bool checkValidationID (unordered_map<int, string>& serialToString, unordered_ma
     return 1;
 }
 
-bool checkValidationString (unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, const string& stringRecieve) {
+bool checkValidationString(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, const string& stringRecieve) {
     loadunordered_mapFromFile(stringToSerial, serialToString);
     if (stringToSerial[stringRecieve] == 0) {
         return 0;
@@ -303,7 +306,7 @@ void addBook(unordered_map<string, int>& stringToSerial, unordered_map<int, stri
         cout << "This Book ID Is Already Exist, Please Enter Another ID" << '\n';
         cout << "Please Enter Another ID: "; cin >> inputID; cout << '\n';
     }
-
+    book.setSoldStatus(false);
     book.setSerialNumber(inputID);
     saveBook(stringToSerial, serialToString, book);
 }
@@ -325,7 +328,7 @@ void editBookInfo(unordered_map<string, int>& stringToSerial, unordered_map<int,
 
 }
 
-void readBook (unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
+void readBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
     int inputNumber;
     string inputString;
 
@@ -354,7 +357,7 @@ void readBook (unordered_map<string, int>& stringToSerial, unordered_map<int, st
     }
 }
 
-void deleteBook (unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
+void deleteBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
     int inputNumber;
     string fileName, bookName;
 
@@ -381,6 +384,42 @@ void deleteBook (unordered_map<string, int>& stringToSerial, unordered_map<int, 
             cout << "Book " << bookName << " Successfully Deleted Fromm Library !" << '\n';
     }
 }
+bool checkSoldFile(const string& fileName) {
+    ifstream file(fileName);
+    bool lineSold;
+    if (file.is_open()) {
+        string line;
+        int lineNumber = 1;
+
+        while (getline(file, line)) {
+            if (lineNumber == 4) {
+
+                lineSold = (true) ? 0 : 1;
+                break;
+            }
+            lineNumber++;
+        }
+        file.close();
+        return lineSold;
+    }
+}
+
+void sellBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
+    string inputString;
+    cout << "Please Enter Book Name: "; cin >> inputString;
+    while(!checkValidationString(stringToSerial, serialToString, inputString)) {
+        cout << "Book Name Is Invalid, Please Try Another Book Name" << '\n';
+        cout << "Please Enter Book Name: "; cin >> inputString;
+    } 
+    if (checkSoldFile(inputString + " Book.txt")) {
+        cout << "This Book Sold" << '\n';
+    } else {
+        cout << "Not Sold" << '\n';
+    }
+
+
+
+}
 
 //Function for print all bookName stored in files
 void printAllBooks(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
@@ -388,7 +427,7 @@ void printAllBooks(unordered_map<string, int>& stringToSerial, unordered_map<int
     if (flagFile) {
         loadunordered_mapFromFile(stringToSerial, serialToString);
     }
-    cout << "> List of all books in the library:" << '\n';
+    cout << "> List Of All Books In The Library" << '\n';
 
     for (const auto& pair : serialToString) {
         cout << "Book Name: " << pair.second << " Book ID: " << pair.first << '\n';
@@ -443,6 +482,9 @@ int main() {
                     break;
                 case 6:
                     // Exit Case
+                    break;
+                case 7:
+                    sellBook(stringToSerial, serialToString);
                     break;
                 default:
                     cout << "Invalid Command, Please Try Again!" << '\n';
