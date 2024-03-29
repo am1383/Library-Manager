@@ -221,6 +221,7 @@ void setunordered_map(unordered_map<string, int>& stringToSerial, unordered_map<
     stringToSerial[bookRec] = serialNumber;
     saveunordered_mapToFile(stringToSerial, serialToString);
     } else {
+        //getunordered_mapString()
         serialToString[serialNumber] = bookRec;
         stringToSerial[bookRec] = serialNumber;
     }
@@ -377,6 +378,7 @@ void deleteBook(unordered_map<string, int>& stringToSerial, unordered_map<int, s
         case 2:
             cout << "Please Enter Book Name: "; cin >> bookName;
             fileName = bookName + " Book.txt";
+            break;
         default:
             cout << "Invalid Key, Please Try Again !" << '\n';
             break;
@@ -390,17 +392,13 @@ void deleteBook(unordered_map<string, int>& stringToSerial, unordered_map<int, s
     }
 }
 
-void updateFileInfo(const string& oldFileName, const string& newFileName) {
+void updateFileInfo(const string
+& oldFileName, const string& newFileName) {
   if (rename(oldFileName.c_str(), newFileName.c_str()) != 0) {
-    cout << "Error: Unable to rename file from " << oldFileName << " to " << newFileName << '\n';
+    cout << "Unable To Rename File From " << oldFileName << " To " << newFileName << '\n';
     return;
   }
-  cout << "File name changed successfully from " << oldFileName << " to " << newFileName << '\n';
     ifstream inFile(newFileName);
-    if (!inFile.is_open()) {
-        cerr << "Error: Unable to open file " << newFileName << '\n';
-        return;
-    }
 
     string line;
     string updatedContent;
@@ -416,17 +414,14 @@ void updateFileInfo(const string& oldFileName, const string& newFileName) {
     inFile.close();
 
     ofstream outFile(newFileName);
-    if (!outFile.is_open()) {
-        cout << "Error: Unable to open file for writing: " << newFileName << '\n';
-        return;
-    }
+
     outFile << updatedContent;
     outFile.close();
 }
 
 void sellBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
     string inputString, tempInputString, inputBookName;
-
+    cout << "> Sell Book" << '\n' << '\n';
     cout << "Please Enter Book Name: "; cin >> inputBookName;
     while(!checkValidationString(stringToSerial, serialToString, inputBookName)) {
         cout << "Book Name Is Invalid, Please Try Another Book Name" << '\n';
@@ -436,7 +431,7 @@ void sellBook(unordered_map<string, int>& stringToSerial, unordered_map<int, str
     tempInputString = inputBookName + " Archive.txt";
 
     if (getunordered_mapID(stringToSerial, inputString)) {
-        cout << "This Book Is Already Sold, Please Try Again" << '\n';
+        cout << "This Book Is Already Sold, Please Try Again !" << '\n';
         return;
     }
     updateFileInfo(inputString, tempInputString);
