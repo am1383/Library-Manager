@@ -98,7 +98,7 @@ void replaceLine(const string& filename, const int& lineNumber, const string& ne
     }
 
     for (const string& l : lines) {
-        outFile << l << endl;
+        outFile << l << '\n';
     }
 
     outFile.close();
@@ -215,10 +215,15 @@ void removeFromunordered_mapFile(const string& keyToRemove, unordered_map<string
     }
 }
 
-void setunordered_map(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, const string& bookRec, const int& serialNumber) {
+void setunordered_map(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, const string& bookRec, const int& serialNumber, const bool& saveStatus) {
+    if (saveStatus) {
     serialToString[serialNumber] = bookRec;
     stringToSerial[bookRec] = serialNumber;
     saveunordered_mapToFile(stringToSerial, serialToString);
+    } else {
+        serialToString[serialNumber] = bookRec;
+        stringToSerial[bookRec] = serialNumber;
+    }
 }
 
 int getunordered_mapID(unordered_map<string, int>& stringToSerial, const string& inputString) {
@@ -239,7 +244,7 @@ void saveBook(unordered_map<string, int>& stringToSerial, unordered_map<int, str
         outPutFile << "Book ID: " << book.getSerialNumber() << '\n';
         outPutFile.close();
 
-        setunordered_map(stringToSerial, serialToString, book.getBookName(), book.getSerialNumber());
+        setunordered_map(stringToSerial, serialToString, book.getBookName(), book.getSerialNumber(), true);
 
         cout << "Book Added To Library Successfully!" << '\n';
         } else {
@@ -312,19 +317,19 @@ void addBook(unordered_map<string, int>& stringToSerial, unordered_map<int, stri
 }
 
 void editBookInfo(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, Book& book) {
-    string inputString, tempInput;
+    string inputString, tempInputString;
 
     cout << "> Edit Book Information" << '\n' << '\n';
-    cout << "Please Enter Book Name: "; cin >> tempInput;
+    cout << "Please Enter Book Name: "; cin >> tempInputString;
 
-    while(!checkValidationString(stringToSerial, serialToString, tempInput)) {
+    while(!checkValidationString(stringToSerial, serialToString, tempInputString)) {
         cout << "Invalid Book Name, Please Try Again !" << '\n';
-        cout << "Please Enter New Book Name: "; cin >> tempInput;
+        cout << "Please Enter New Book Name: "; cin >> tempInputString;
     }
         cout << "Please Enter New Book Details: "; cin >> inputString;
         book.setBookDetails(inputString);
-        tempInput = tempInput + " Book.txt";
-        replaceLine(tempInput, 3, inputString);
+        tempInputString = tempInputString + " Book.txt";
+        replaceLine(tempInputString, 3, inputString);
 
 }
 
@@ -384,41 +389,59 @@ void deleteBook(unordered_map<string, int>& stringToSerial, unordered_map<int, s
             cout << "Book " << bookName << " Successfully Deleted Fromm Library !" << '\n';
     }
 }
-bool checkSoldFile(const string& fileName) {
-    ifstream file(fileName);
-    bool lineSold;
-    if (file.is_open()) {
-        string line;
-        int lineNumber = 1;
 
-        while (getline(file, line)) {
-            if (lineNumber == 4) {
-
-                lineSold = (true) ? 0 : 1;
-                break;
-            }
-            lineNumber++;
-        }
-        file.close();
-        return lineSold;
+void updateFileInfo(const string& oldFileName, const string& newFileName) {
+  if (rename(oldFileName.c_str(), newFileName.c_str()) != 0) {
+    cout << "Error: Unable to rename file from " << oldFileName << " to " << newFileName << '\n';
+    return;
+  }
+  cout << "File name changed successfully from " << oldFileName << " to " << newFileName << '\n';
+    ifstream inFile(newFileName);
+    if (!inFile.is_open()) {
+        cerr << "Error: Unable to open file " << newFileName << '\n';
+        return;
     }
+
+    string line;
+    string updatedContent;
+    int lineNumber = 1;
+    while (getline(inFile, line)) {
+
+        if (lineNumber == 4) {
+            line = "1";
+        }
+        updatedContent += line + "\n";
+        ++lineNumber;
+    }
+    inFile.close();
+
+    ofstream outFile(newFileName);
+    if (!outFile.is_open()) {
+        cout << "Error: Unable to open file for writing: " << newFileName << '\n';
+        return;
+    }
+    outFile << updatedContent;
+    outFile.close();
 }
 
 void sellBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
-    string inputString;
-    cout << "Please Enter Book Name: "; cin >> inputString;
-    while(!checkValidationString(stringToSerial, serialToString, inputString)) {
+    string inputString, tempInputString, inputBookName;
+
+    cout << "Please Enter Book Name: "; cin >> inputBookName;
+    while(!checkValidationString(stringToSerial, serialToString, inputBookName)) {
         cout << "Book Name Is Invalid, Please Try Another Book Name" << '\n';
-        cout << "Please Enter Book Name: "; cin >> inputString;
-    } 
-    if (checkSoldFile(inputString + " Book.txt")) {
-        cout << "This Book Sold" << '\n';
-    } else {
-        cout << "Not Sold" << '\n';
+        cout << "Please Enter Book Name: "; cin >> inputBookName;
     }
+    inputString = inputBookName + " Book.txt";
+    tempInputString = inputBookName + " Archive.txt";
 
-
-
+    if (getunordered_mapID(stringToSerial, inputString)) {
+        cout << "This Book Is Already Sold, Please Try Again" << '\n';
+        return;
+    }
+    updateFileInfo(inputString, tempInputString);
+    //setunordered_map(stringToSerial, serialToString, inputString, false);
+    cout << "Book Sold !" << '\n';
 }
 
 //Function for print all bookName stored in files
@@ -481,17 +504,17 @@ int main() {
                     printAllBooks(stringToSerial, serialToString);
                     break;
                 case 6:
-                    // Exit Case
+                    sellBook(stringToSerial, serialToString);
                     break;
                 case 7:
-                    sellBook(stringToSerial, serialToString);
+                    //Exit Case
                     break;
                 default:
                     cout << "Invalid Command, Please Try Again!" << '\n';
                     break;
             }
 
-        } while (inputNumber != 6); {
+        } while (inputNumber != 7); {
             cout << "C++ Beginning Project Created By Amir Mohammad Mousavi - 1401 Bu-Ali University";
     }
         return 0;
