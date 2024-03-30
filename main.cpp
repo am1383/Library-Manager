@@ -215,16 +215,11 @@ void removeFromunordered_mapFile(const string& keyToRemove, unordered_map<string
     }
 }
 
-void setunordered_map(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, const string& bookRec, const int& serialNumber, const bool& saveStatus) {
-    if (saveStatus) {
+void setunordered_map(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, const string& bookRec, const int& serialNumber) {
     serialToString[serialNumber] = bookRec;
     stringToSerial[bookRec] = serialNumber;
     saveunordered_mapToFile(stringToSerial, serialToString);
-    } else {
-        //getunordered_mapString()
-        serialToString[serialNumber] = bookRec;
-        stringToSerial[bookRec] = serialNumber;
-    }
+
 }
 
 int getunordered_mapID(unordered_map<string, int>& stringToSerial, const string& inputString) {
@@ -245,7 +240,7 @@ void saveBook(unordered_map<string, int>& stringToSerial, unordered_map<int, str
         outPutFile << "Book ID: " << book.getSerialNumber() << '\n';
         outPutFile.close();
 
-        setunordered_map(stringToSerial, serialToString, book.getBookName(), book.getSerialNumber(), true);
+        setunordered_map(stringToSerial, serialToString, book.getBookName(), book.getSerialNumber());
 
         cout << "Book Added To Library Successfully!" << '\n';
         } else {
@@ -435,7 +430,7 @@ void sellBook(unordered_map<string, int>& stringToSerial, unordered_map<int, str
         return;
     }
     updateFileInfo(inputString, tempInputString);
-    //setunordered_map(stringToSerial, serialToString, inputString, false);
+    removeFromunordered_mapFile(inputBookName, stringToSerial, serialToString);
     cout << "Book Sold !" << '\n';
 }
 
