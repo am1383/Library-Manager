@@ -385,30 +385,39 @@ void deleteBook(unordered_map<string, int>& stringToSerial, unordered_map<int, s
     }
 }
 
-void updateFileInfo(const string& oldFileName, const string& newFileName) {
-  if (rename(oldFileName.c_str(), newFileName.c_str()) != 0) {
-    cout << "Unable To Rename File From " << oldFileName << " To " << newFileName << '\n';
-    return;
-  }
-    ifstream inFile(newFileName);
-
-    string line;
-    string updatedContent;
-    int lineNumber = 1;
-    while (getline(inFile, line)) {
-
-        if (lineNumber == 4) {
-            line = "1";
+void updateFileSoldInfo(const string& bookName, const string& oldFileName, const string& newFileName) {
+    ifstream readFile(newFileName);
+    if (readFile.is_open()) {
+        readFile.close();
+        remove(oldFileName.c_str());
+        cout << "Another Archive Of This File Is Already Exist !" << '\n';
+        return;
+    
+    } else {
+        if (rename(oldFileName.c_str(), newFileName.c_str()) != 0) {
+            cout << "Unable To Rename File From " << oldFileName << " To " << newFileName << '\n';
+            return;
         }
-        updatedContent += line + "\n";
-        ++lineNumber;
+            ifstream inFile(newFileName);
+            string line;
+            string updatedContent;
+            int lineNumber = 1;
+            while (getline(inFile, line)) {
+
+                if (lineNumber == 4) {
+                    line = "1";
+                }
+                updatedContent += line + "\n";
+                ++lineNumber;
+            }
+            inFile.close();
+
+            ofstream outFile(newFileName);
+            outFile << updatedContent;
+            outFile.close();
+            cout << "Book Sold And Removed From Library Sucessfuly !" << '\n';
     }
-    inFile.close();
 
-    ofstream outFile(newFileName);
-
-    outFile << updatedContent;
-    outFile.close();
 }
 
 void sellBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
@@ -426,9 +435,8 @@ void sellBook(unordered_map<string, int>& stringToSerial, unordered_map<int, str
         cout << "This Book Is Already Sold, Please Try Again !" << '\n';
         return;
     }
-    updateFileInfo(inputString, tempInputString);
+    updateFileSoldInfo(inputBookName, inputString, tempInputString);
     removeFromunordered_mapFile(inputBookName, stringToSerial, serialToString);
-    cout << "Book Sold !" << '\n';
 }
 
 //Function for print all bookName stored in files
@@ -442,7 +450,6 @@ void printAllBooks(unordered_map<string, int>& stringToSerial, unordered_map<int
     for (const auto& pair : serialToString) {
         cout << "Book Name: " << pair.second << " Book ID: " << pair.first << '\n';
     }
-
 }
 
 void helpSystem() {
