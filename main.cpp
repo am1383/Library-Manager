@@ -124,7 +124,7 @@ void loadunordered_mapFromFile(unordered_map<string, int>& stringToSerial, unord
 
     bool flagFile = hasFileChanged();
     if (!flagFile) {
-    ifstream inputFile("map.txt");
+        ifstream inputFile("map.txt");
     if (inputFile.is_open()) {
         string key;
         int value;
@@ -154,7 +154,6 @@ void saveunordered_mapToFile(const unordered_map<string, int>& stringToSerial, c
         ofstream createFile("map.txt");
         if (createFile.is_open()) {
                 createFile.close();
-
         } else {
             cout << "Unable To Open Map File, Please Contact Developers !" << '\n';
         }
@@ -219,7 +218,6 @@ void setunordered_map(unordered_map<string, int>& stringToSerial, unordered_map<
     serialToString[serialNumber] = bookRec;
     stringToSerial[bookRec] = serialNumber;
     saveunordered_mapToFile(stringToSerial, serialToString);
-
 }
 
 int getunordered_mapID(unordered_map<string, int>& stringToSerial, const string& inputString) {
@@ -504,7 +502,8 @@ int main() {
             }
 
         } while (inputNumber != 7); {
-            cout << "C++ Beginning Project Created By Amir Mohammad Mousavi - 1401 Bu-Ali University";
+            cout << "C++ Beginning Project Created By Amir Mohammad Mousavi - 1401 Bu-Ali University" << '\n';
     }
+        delete book;
         return 0;
 }
