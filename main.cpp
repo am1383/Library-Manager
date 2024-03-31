@@ -29,41 +29,16 @@ public:
     void setSoldStatus(const bool& soldStatusR) {soldStatus = soldStatusR;}
 };
 
-//Function to check files changes
-bool hasFileChanged() {
-  static unordered_map<string, long> fileSizes; // Cache file sizes
+//Function to check map changes
+bool hasFileChanged(const unordered_map<string, int>& stringToSerial) {
+    static size_t lastSize = sizeof(stringToSerial);
 
-  // Check if file exists in cache
-  if (fileSizes.count("map.txt") > 0) {
-    // Get file size
-    ifstream file("map.txt");
-    if (file.good()) {
-      file.seekg(0, ios::end);
-      long currentSize = file.tellg();
-
-      // Compare sizes and update cache if changed
-      if (currentSize != fileSizes["map.txt"]) {
-        fileSizes["map.txt"] = currentSize;
+    size_t newSize = sizeof(stringToSerial);
+    if (newSize != lastSize) {
         return true;
-      }
-      return false;
-    } else {
-      // Handle error opening file
-      return false; // Consider throwing an exception for better error handling
+        lastSize = newSize;
     }
-  } else {
-    // Get file size for the first time
-    ifstream file("map.txt");
-    if (file.good()) {
-      file.seekg(0, ios::end);
-      long currentSize = file.tellg();
-      fileSizes["map.txt"] = currentSize;
-      return false;
-    } else {
-      // Handle error opening file
-      return false; // Consider throwing an exception for better error handling
-    }
-  }
+    return false;
 }
 
 void replaceLine(const string& filename, const int& lineNumber, const string& newText) {
@@ -122,7 +97,7 @@ void loadMapFromFile(unordered_map<string, int>& stringToSerial, unordered_map<i
         }
     }
 
-    bool flagFile = hasFileChanged();
+    bool flagFile = hasFileChanged(stringToSerial);
     if (!flagFile) {
         ifstream inputFile("map.txt");
     if (inputFile.is_open()) {
@@ -324,7 +299,6 @@ void editBookInfo(unordered_map<string, int>& stringToSerial, unordered_map<int,
         book->setBookDetails(inputString);
         tempInputString = tempInputString + " Book.txt";
         replaceLine(tempInputString, 3, inputString);
-
 }
 
 void readBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
@@ -381,7 +355,7 @@ void deleteBook(unordered_map<string, int>& stringToSerial, unordered_map<int, s
             cout << "Book Name Is Not Exist, Please Try Again !" << '\n';
         } else {
             removeFromMapFile(bookName, stringToSerial, serialToString);
-            cout << "Book " << bookName << " Successfully Deleted Fromm Library !" << '\n';
+            cout << "Book " << bookName << " Successfully Deleted From Library !" << '\n';
     }
 }
 
@@ -392,7 +366,7 @@ void updateFileSoldInfo(const string& bookName, const string& oldFileName, const
         remove(oldFileName.c_str());
         cout << "Another Archive Of This File Is Already Exist !" << '\n';
         return;
-    
+
     } else {
         if (rename(oldFileName.c_str(), newFileName.c_str()) != 0) {
             cout << "Unable To Rename File From " << oldFileName << " To " << newFileName << '\n';
@@ -420,9 +394,9 @@ void updateFileSoldInfo(const string& bookName, const string& oldFileName, const
 
 }
 
-void sellBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
+void buyBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
     string inputString, tempInputString, inputBookName;
-    cout << "> Sell Book" << '\n' << '\n';
+    cout << "> Buy Book" << '\n' << '\n';
     cout << "Please Enter Book Name: "; cin >> inputBookName;
     while(!checkValidationString(stringToSerial, serialToString, inputBookName)) {
         cout << "Book Name Is Invalid, Please Try Another Book Name" << '\n';
@@ -441,10 +415,7 @@ void sellBook(unordered_map<string, int>& stringToSerial, unordered_map<int, str
 
 //Function for print all bookName stored in files
 void printAllBooks(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
-    bool flagFile = hasFileChanged();
-    if (flagFile) {
-        loadMapFromFile(stringToSerial, serialToString);
-    }
+
     cout << "> List Of All Books In The Library" << '\n';
 
     for (const auto& pair : serialToString) {
@@ -498,7 +469,7 @@ int main() {
                     printAllBooks(stringToSerial, serialToString);
                     break;
                 case 6:
-                    sellBook(stringToSerial, serialToString);
+                    buyBook(stringToSerial, serialToString);
                     break;
                 case 7:
                     //Exit Case
