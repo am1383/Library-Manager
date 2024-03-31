@@ -4,7 +4,7 @@
 
 #### Description:
 
-This project is a simple library management system implemented in C++ that utilizes file I/O and the std::map data structure. It allows users to add, delete, edit, and view books in a library. The project aims to provide a practical example for utilizing file systems and working with classes in C++.
+This project is a simple library management system implemented in C++ that utilizes file I/O and the std::map data structure. It allows users to add, delete, edit, buy and view books in a library. The project aims to provide a practical example for utilizing file systems and working with classes in C++.
 
 #### Features:
 
