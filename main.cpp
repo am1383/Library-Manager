@@ -189,6 +189,15 @@ void removeFromMapFile(const string& keyToRemove, unordered_map<string, int>& st
     }
 }
 
+bool readBuyBook(const string& bookName) {
+    ifstream fileCheck(bookName);
+    if (fileCheck.is_open()) {
+        fileCheck.close();
+        return true;
+    }
+    return false;
+}
+
 void setMap(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, const string& bookName, const int& serialNumber) {
     serialToString[serialNumber] = bookName;
     stringToSerial[bookName] = serialNumber;
@@ -222,20 +231,23 @@ void saveBook(unordered_map<string, int>& stringToSerial, unordered_map<int, str
 }
 
 void openBook(const string& inputBookName) {
-    ifstream inputFile(inputBookName + " Book.txt");
+    int lineNumber(0);
+    ifstream inputFile(inputBookName);
     if (inputFile.is_open()) {
         string line;
-
-    while (getline(inputFile, line)) {
-        istringstream iss(line);
-        string token;
-
-    while (getline(iss, token, ',')) {
-        cout << token << '\n';
+        cout << '\n';
+        while (getline(inputFile, line)) {
+            istringstream iss(line);
+            string token;
+            if (lineNumber < 3) {
+                while (getline(iss, token, ',')) {
+                    ++lineNumber;
+                    cout << token << '\n';
+                }
             }
         }
-        cout << '\n';
         inputFile.close();
+        cout << '\n';
     } else {
         cout << "This Book Is Not Available, Please Try Another Book !" << '\n';
     }
@@ -306,27 +318,12 @@ void readBook(unordered_map<string, int>& stringToSerial, unordered_map<int, str
     string inputString;
 
     cout << "> Read Book" << '\n' << '\n';
-    cout << "Please Enter Choose Search Selection: "; cin >> inputNumber;
-    switch (inputNumber) {
-        case 1:
-            cout << "Please Enter Book ID: "; cin >> inputNumber; cout << '\n';
-            if(checkValidationID(serialToString, stringToSerial, inputNumber)) {
-                openBook(getMapString(serialToString, inputNumber));
-            } else {
-                cout << "This Book Is Not Available, Please Try Again" << '\n';
-            }
-            break;
-
-        case 2:
-            cout << "Please Enter Book Name: "; cin >> inputString;
-            if(checkValidationString(stringToSerial, serialToString, inputString)) {
-                openBook(inputString);
-            }
-            break;
-
-        default:
-            cout << "Invalid Command, Please Try Again !" << '\n';
-            break;
+    cout << "Please Enter Book Name: "; cin >> inputString;
+    inputString = inputString + " Archive.txt";
+    if (readBuyBook(inputString)) {
+        openBook(inputString);
+    } else {
+        cout << "This Book In Not In Your Archive, Please Try Again !" << '\n';
     }
 }
 
@@ -389,7 +386,7 @@ void updateFileSoldInfo(const string& bookName, const string& oldFileName, const
             ofstream outFile(newFileName);
             outFile << updatedContent;
             outFile.close();
-            cout << "Book Sold And Removed From Library Sucessfuly !" << '\n';
+            cout << "Book Added To Your Archive Sucessfuly !" << '\n';
     }
 
 }
