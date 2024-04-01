@@ -41,7 +41,7 @@ bool hasFileChanged(const unordered_map<string, int>& stringToSerial) {
     return false;
 }
 
-void replaceLine(const string& filename, const int& lineNumber, const string& newText) {
+void replaceLine(const string& filename, const int& lineNumber, string& newText) {
     ifstream inFile(filename);
 
     if (!inFile) {
@@ -62,9 +62,8 @@ void replaceLine(const string& filename, const int& lineNumber, const string& ne
         cout << "Invalid Line Number, Please Try Again !" << '\n';
         return;
     }
-
+    newText = "Book Details: " + newText;
     lines[lineNumber - 1] = newText;
-
     ofstream outFile(filename);
 
     if (!outFile) {
@@ -77,7 +76,6 @@ void replaceLine(const string& filename, const int& lineNumber, const string& ne
     }
 
     outFile.close();
-
     cout << "Book Details Updated Successfully !" << '\n';
 }
 
@@ -297,7 +295,7 @@ void addBook(unordered_map<string, int>& stringToSerial, unordered_map<int, stri
     saveBook(stringToSerial, serialToString, book);
 }
 
-void editBookInfo(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, Book* book) {
+void editBookInfo(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
     string inputString, tempInputString;
 
     cout << "> Edit Book Information" << '\n' << '\n';
@@ -307,8 +305,8 @@ void editBookInfo(unordered_map<string, int>& stringToSerial, unordered_map<int,
         cout << "Invalid Book Name, Please Try Again !" << '\n';
         cout << "Please Enter New Book Name: "; cin >> tempInputString;
     }
-        cout << "Please Enter New Book Details: "; cin >> inputString;
-        book->setBookDetails(inputString);
+        cin.ignore();
+        cout << "Please Enter New Book Details: "; getline(cin, inputString);
         tempInputString = tempInputString + " Book.txt";
         replaceLine(tempInputString, 3, inputString);
 }
@@ -454,7 +452,7 @@ int main() {
                     addBook(stringToSerial, serialToString, book);
                     break;
                 case 2:
-                    editBookInfo(stringToSerial, serialToString, book);
+                    editBookInfo(stringToSerial, serialToString);
                     break;
                 case 3:
                     readBook(stringToSerial, serialToString);
