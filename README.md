@@ -12,10 +12,11 @@ Add Book: Users can add new books to the library by providing details such as bo
 Delete Book: Books can be deleted from the library by specifying the serial number of the book.
 Edit Book: Users can edit the details of existing books, such as updating the book name or author.
 View Books: The system allows users to view the list of all books currently in the library.
-Technologies Used:
-
 Sold Book:The system can allows users to buy book and move book file to archive and remove from library storage.
+Read Book: User can read a book if its available in their library.
+Edit Book: User can edit book name, author and book details.
 
+Technologies Used:
 #### C++ programming language
 
 File Input/Output (I/O)
