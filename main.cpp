@@ -41,13 +41,8 @@ bool hasFileChanged(const unordered_map<string, int>& stringToSerial) {
     return false;
 }
 
-void replaceLine(const string& filename, const int& lineNumber, string& newText) {
-    ifstream inFile(filename);
-
-    if (!inFile) {
-        cout << "Unable To Open Book File, Please Contact Developers !" << '\n';
-        return;
-    }
+void replaceLine(string& fileName, const int& lineNumber, string& newText) {
+    ifstream inFile(fileName);
 
     vector<string> lines;
     string line;
@@ -58,13 +53,23 @@ void replaceLine(const string& filename, const int& lineNumber, string& newText)
 
     inFile.close();
 
-    if (lineNumber < 1 || lineNumber > lines.size()) {
+    if (lineNumber == 1) {
+        string newFileName = newText + " Book.txt";
+
+        rename(fileName.c_str(), newFileName.c_str());
+        fileName = newFileName;
+    } else if (lineNumber == 2) {
+        newText = "Author Name: " + newText;
+    } else if (lineNumber == 3) {
+        newText = "Book Details: " + newText;
+    } else {
         cout << "Invalid Line Number, Please Try Again !" << '\n';
         return;
     }
-    newText = "Book Details: " + newText;
+    newText = "Book Name: " + newText;
     lines[lineNumber - 1] = newText;
-    ofstream outFile(filename);
+
+    ofstream outFile(fileName);
 
     if (!outFile) {
         cout << "Unable To Open Book File, Please Contact Developers !" << '\n';
@@ -290,25 +295,53 @@ void addBook(unordered_map<string, int>& stringToSerial, unordered_map<int, stri
         cout << "This Book ID Is Already Exist, Please Enter Another ID" << '\n';
         cout << "Please Enter Another ID: "; cin >> inputID; cout << '\n';
     }
+
     book->setSoldStatus(false);
     book->setSerialNumber(inputID);
     saveBook(stringToSerial, serialToString, book);
 }
 
 void editBookInfo(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
-    string inputString, tempInputString;
-
+    string inputString, tempInputString, bookName;
+    int inputNumber;
     cout << "> Edit Book Information" << '\n' << '\n';
     cout << "Please Enter Book Name: "; cin >> tempInputString;
+    bookName = tempInputString;
 
     while(!checkValidationString(stringToSerial, serialToString, tempInputString)) {
         cout << "Invalid Book Name, Please Try Again !" << '\n';
         cout << "Please Enter New Book Name: "; cin >> tempInputString;
     }
-        cin.ignore();
-        cout << "Please Enter New Book Details: "; getline(cin, inputString);
-        tempInputString = tempInputString + " Book.txt";
-        replaceLine(tempInputString, 3, inputString);
+    cout << "Please Enter Your Choose: "; cin >> inputNumber;
+
+    switch (inputNumber) {
+        case 1:
+            cout << "Please Enter New Book Name: "; cin >> inputString;
+            while(checkValidationString(stringToSerial, serialToString, inputString)) {
+            cout << "This Book Name Is Already Exist, Please Enter New Name !" << '\n';
+            cout << "Please Enter New Book Name: "; cin >> inputString;
+            }
+            tempInputString = tempInputString + " Book.txt";
+            replaceLine(tempInputString, 1, inputString);
+            break;
+
+        case 2:
+            cout << "Please Enter New Author Name: "; cin >> inputString;
+            tempInputString = tempInputString + " Book.txt";
+            replaceLine(tempInputString, 2, inputString);
+            break;
+
+        case 3:
+            cin.ignore();
+            cout << "Please Enter New Book Details: "; getline(cin, inputString);
+            tempInputString = tempInputString + " Book.txt";
+            replaceLine(tempInputString, 3, inputString);
+            break;
+
+        default:
+            cout << "Invalid Key, Please Try Again !" << '\n';
+            break;
+    }
 }
 
 void readBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
@@ -418,7 +451,7 @@ void printAllBooks(unordered_map<string, int>& stringToSerial, unordered_map<int
     }
 }
 
-void helpSystem() {
+void helpMenu() {
 
     cout << "> Help Page\n\n"
          << "0 -> Help System\n"
@@ -446,7 +479,7 @@ int main() {
         cout << "> "; cin >> inputNumber;
             switch (inputNumber) {
                 case 0:
-                    helpSystem();
+                    helpMenu();
                     break;
                 case 1:
                     addBook(stringToSerial, serialToString, book);
