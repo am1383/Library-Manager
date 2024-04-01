@@ -41,7 +41,7 @@ bool hasFileChanged(const unordered_map<string, int>& stringToSerial) {
     return false;
 }
 
-void replaceLine(string& fileName, const int& lineNumber, string& newText) {
+void replaceLine(string& fileName, const int& lineNumber, string newText) {
     ifstream inFile(fileName);
 
     vector<string> lines;
@@ -52,10 +52,8 @@ void replaceLine(string& fileName, const int& lineNumber, string& newText) {
     }
 
     inFile.close();
-
     if (lineNumber == 1) {
         string newFileName = newText + " Book.txt";
-
         rename(fileName.c_str(), newFileName.c_str());
         fileName = newFileName;
     } else if (lineNumber == 2) {
@@ -66,15 +64,8 @@ void replaceLine(string& fileName, const int& lineNumber, string& newText) {
         cout << "Invalid Line Number, Please Try Again !" << '\n';
         return;
     }
-    newText = "Book Name: " + newText;
     lines[lineNumber - 1] = newText;
-
     ofstream outFile(fileName);
-
-    if (!outFile) {
-        cout << "Unable To Open Book File, Please Contact Developers !" << '\n';
-        return;
-    }
 
     for (const string& l : lines) {
         outFile << l << '\n';
@@ -152,43 +143,50 @@ void saveMapToFile(const unordered_map<string, int>& stringToSerial, const unord
     }
 }
 
-
 void removeFromMapFile(const string& keyToRemove, unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
-    // Create a temporary Map to store contents of the file
-    unordered_map<string, int> tempStringToSerial;
-    unordered_map<int, string> tempSerialToString;
+    // Remove the key from the maps
+    stringToSerial.erase(keyToRemove);
+    for (auto it = serialToString.begin(); it != serialToString.end();) {
+        if (it->second == keyToRemove)
+            it = serialToString.erase(it);
+        else
+            ++it;
+    }
 
-    // Read data from the file into the temporary Map
-    ifstream inFile("map.txt");
-    if (inFile.is_open()) {
-        string key;
-        int value;
-        while (inFile >> key >> value) {
-            if (key != keyToRemove) { // Skip the key to remove
-                tempStringToSerial[key] = value;
-                tempSerialToString[value] = key;
-            }
+    // Write data back to the file
+    ofstream outFile("map.txt");
+    if (outFile.is_open()) {
+        for (const auto& pair : stringToSerial) {
+            outFile << pair.first << " " << pair.second << '\n';
         }
-        inFile.close();
-
-        // Write data back to the file excluding the key to remove
-        ofstream outFile("map.txt");
-        if (outFile.is_open()) {
-            for (const auto& pair : tempStringToSerial) {
-                outFile << pair.first << " " << pair.second << '\n';
-            }
-            for (const auto& pair : tempSerialToString) {
-                outFile << pair.first << " " << pair.second << '\n';
-            }
-            outFile.close();
-            stringToSerial = tempStringToSerial;
-            serialToString = tempSerialToString;
-        } else {
-            cout << "Unable To Open File To Write Map data, Please Contact Developers !" << '\n';
+        for (const auto& pair : serialToString) {
+            outFile << pair.second << " " << pair.first << '\n';
         }
+        outFile.close();
     } else {
-        cout << "Unable To Open File To Read Map, Please Contact Developers !" << '\n';
-        return;
+        cout << "Unable To Open File To Write Map data, Please Contact Developers !" << '\n';
+    }
+}
+
+void renameMapInFile(const string& oldName, const string& newName, unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
+    // Replace the old name with the new name in the maps
+    int serial = stringToSerial[oldName];
+    stringToSerial.erase(oldName);
+    stringToSerial[newName] = serial;
+    serialToString[serial] = newName;
+
+    // Write data back to the file
+    ofstream outFile("map.txt");
+    if (outFile.is_open()) {
+        for (const auto& pair : stringToSerial) {
+            outFile << pair.first << " " << pair.second << '\n';
+        }
+        for (const auto& pair : serialToString) {
+            outFile << pair.first << " " << pair.second << '\n';
+        }
+        outFile.close();
+    } else {
+        cout << "Unable To Open File To Write Map data, Please Contact Developers !" << '\n';
     }
 }
 
@@ -318,17 +316,20 @@ void editBookInfo(unordered_map<string, int>& stringToSerial, unordered_map<int,
         case 1:
             cout << "Please Enter New Book Name: "; cin >> inputString;
             while(checkValidationString(stringToSerial, serialToString, inputString)) {
-            cout << "This Book Name Is Already Exist, Please Enter New Name !" << '\n';
-            cout << "Please Enter New Book Name: "; cin >> inputString;
+                cout << "This Book Name Is Already Exist, Please Enter New Name !" << '\n';
+                cout << "Please Enter New Book Name: "; cin >> inputString;
             }
             tempInputString = tempInputString + " Book.txt";
             replaceLine(tempInputString, 1, inputString);
+            renameMapInFile(bookName, inputString, stringToSerial, serialToString);
+            cout << "Book Name Changed Sucessfuly !" << '\n';
             break;
 
         case 2:
             cout << "Please Enter New Author Name: "; cin >> inputString;
             tempInputString = tempInputString + " Book.txt";
             replaceLine(tempInputString, 2, inputString);
+            cout << "Book Author Changed Sucessfuly !" << '\n';
             break;
 
         case 3:
@@ -336,6 +337,7 @@ void editBookInfo(unordered_map<string, int>& stringToSerial, unordered_map<int,
             cout << "Please Enter New Book Details: "; getline(cin, inputString);
             tempInputString = tempInputString + " Book.txt";
             replaceLine(tempInputString, 3, inputString);
+            cout << "Book Details Changed Sucessfuly !" << '\n';
             break;
 
         default:
@@ -359,8 +361,8 @@ void readBook(unordered_map<string, int>& stringToSerial, unordered_map<int, str
 }
 
 void deleteBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
-    int inputNumber;
     string fileName, bookName;
+    int inputNumber;
 
     cout << "> Delete Book" << '\n' << '\n';
     cout << "Please Choose Your Selection: "; cin >> inputNumber;
