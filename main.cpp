@@ -113,21 +113,39 @@ void loadMapFromFile(unordered_map<string, int>& stringToSerial, unordered_map<i
     }
 }
 
-//Function to save contents in Map file
-void saveMapToFile(const unordered_map<string, int>& stringToSerial, const unordered_map<int, string>& serialToString) {
-    ifstream file("map.txt");
-
+void loadArchiveFromFile(vector<string>& archiveBookName) {
+    ifstream file("Archive.txt");
     if (file.good()) {
 
     } else {
-        ofstream createFile("map.txt");
+        ofstream createFile("Archive.txt");
         if (createFile.is_open()) {
                 createFile.close();
+
         } else {
-            cout << "Unable To Open Map File, Please Contact Developers !" << '\n';
+            cout << "Unable To Open Archive File, Please Contact Developers !" << '\n';
         }
     }
+    string line;
+    while (getline(file, line)) {
+        archiveBookName.push_back(line);
+    }
+    file.close();
+}
 
+void saveArchiveToFile(vector<string>& saveArchiveToFile, const string& bookName) {
+    ofstream outPutFile("Archive.txt");
+
+    if (outPutFile.is_open()) {
+        outPutFile << bookName << '\n';
+        outPutFile.close();
+    } else {
+        cout << "Unable To Open Archive File, Pleae Contact Developers !" << '\n';
+    }
+}
+
+//Function to save contents in Map file
+void saveMapToFile(const unordered_map<string, int>& stringToSerial, const unordered_map<int, string>& serialToString) {
     ofstream outPutFile("map.txt");
 
     if (outPutFile.is_open()) {
@@ -424,7 +442,7 @@ void updateFileSoldInfo(const string& bookName, const string& oldFileName, const
 
 }
 
-void buyBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
+void buyBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, vector<string>& archiveBookName) {
     string inputString, tempInputString, inputBookName;
     cout << "> Buy Book" << '\n' << '\n';
     cout << "Please Enter Book Name: "; cin >> inputBookName;
@@ -440,16 +458,23 @@ void buyBook(unordered_map<string, int>& stringToSerial, unordered_map<int, stri
         return;
     }
     updateFileSoldInfo(inputBookName, inputString, tempInputString);
+    saveArchiveToFile(archiveBookName, inputBookName);
     removeFromMapFile(inputBookName, stringToSerial, serialToString);
 }
 
 //Function for print all bookName stored in files
-void printAllBooks(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
+void printAllBooks(const unordered_map<int, string>& serialToString, const vector<string>& archiveBook) {
 
     cout << "> List Of All Books In The Library" << '\n';
 
     for (const auto& pair : serialToString) {
         cout << "Book Name: " << pair.second << " Book ID: " << pair.first << '\n';
+    }
+
+    cout << "> List Of All Book In The Archive" << '\n';
+
+    for (const auto& archiveBook : archiveBook) {
+        cout << archiveBook << '\n';
     }
 }
 
@@ -469,8 +494,10 @@ void helpMenu() {
 int main() {
     unordered_map<string, int> stringToSerial;
     unordered_map<int, string> serialToString;
+    vector<string> archiveBookName;
 
     loadMapFromFile(stringToSerial, serialToString);
+    loadArchiveFromFile(archiveBookName);
 
     Book *book = new Book();
     int inputNumber;
@@ -496,10 +523,10 @@ int main() {
                     deleteBook(stringToSerial, serialToString);
                     break;
                 case 5:
-                    printAllBooks(stringToSerial, serialToString);
+                    printAllBooks(serialToString, archiveBookName);
                     break;
                 case 6:
-                    buyBook(stringToSerial, serialToString);
+                    buyBook(stringToSerial, serialToString, archiveBookName);
                     break;
                 case 7:
                     //Exit Case
