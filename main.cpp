@@ -162,27 +162,41 @@ void saveMapToFile(const unordered_map<string, int>& stringToSerial, const unord
 }
 
 void removeFromMapFile(const string& keyToRemove, unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
-    // Remove the key from the maps
-    stringToSerial.erase(keyToRemove);
-    for (auto it = serialToString.begin(); it != serialToString.end();) {
-        if (it->second == keyToRemove)
-            it = serialToString.erase(it);
-        else
-            ++it;
-    }
+    // Create a temporary Map to store contents of the file
+    unordered_map<string, int> tempStringToSerial;
+    unordered_map<int, string> tempSerialToString;
 
-    // Write data back to the file
-    ofstream outFile("map.txt");
-    if (outFile.is_open()) {
-        for (const auto& pair : stringToSerial) {
-            outFile << pair.first << " " << pair.second << '\n';
+    // Read data from the file into the temporary Map
+    ifstream inFile("map.txt");
+    if (inFile.is_open()) {
+        string key;
+        int value;
+        while (inFile >> key >> value) {
+            if (key != keyToRemove) { // Skip the key to remove
+                tempStringToSerial[key] = value;
+                tempSerialToString[value] = key;
+            }
         }
-        for (const auto& pair : serialToString) {
-            outFile << pair.second << " " << pair.first << '\n';
+        inFile.close();
+
+        // Write data back to the file excluding the key to remove
+        ofstream outFile("map.txt");
+        if (outFile.is_open()) {
+            for (const auto& pair : tempStringToSerial) {
+                outFile << pair.first << " " << pair.second << '\n';
+            }
+            for (const auto& pair : tempSerialToString) {
+                outFile << pair.first << " " << pair.second << '\n';
+            }
+            outFile.close();
+            stringToSerial = tempStringToSerial;
+            serialToString = tempSerialToString;
+        } else {
+            cout << "Unable To Open File To Write Map data, Please Contact Developers !" << '\n';
         }
-        outFile.close();
     } else {
-        cout << "Unable To Open File To Write Map data, Please Contact Developers !" << '\n';
+        cout << "Unable To Open File To Read Map, Please Contact Developers !" << '\n';
+        return;
     }
 }
 
@@ -240,7 +254,7 @@ void saveBook(unordered_map<string, int>& stringToSerial, unordered_map<int, str
         outPutFile << false << '\n';
         outPutFile << "Book ID: " << book->getSerialNumber() << '\n';
         outPutFile.close();
-
+    
         setMap(stringToSerial, serialToString, book->getBookName(), book->getSerialNumber());
 
         cout << "Book Added To Library Successfully!" << '\n';
@@ -458,8 +472,9 @@ void buyBook(unordered_map<string, int>& stringToSerial, unordered_map<int, stri
         return;
     }
     updateFileSoldInfo(inputBookName, inputString, tempInputString);
-    saveArchiveToFile(archiveBookName, inputBookName);
     removeFromMapFile(inputBookName, stringToSerial, serialToString);
+    saveArchiveToFile(archiveBookName, inputBookName);
+
 }
 
 //Function for print all bookName stored in files
