@@ -31,12 +31,11 @@ public:
 
 //Function to check map changes
 bool hasFileChanged(const unordered_map<string, int>& stringToSerial) {
-    static size_t lastSize = sizeof(stringToSerial);
+    static unordered_map<string, int> lastStringToSerial;
 
-    size_t newSize = sizeof(stringToSerial);
-    if (newSize != lastSize) {
+    if (stringToSerial != lastStringToSerial) {
+        lastStringToSerial = stringToSerial;
         return true;
-        lastSize = newSize;
     }
     return false;
 }
@@ -254,7 +253,7 @@ void saveBook(unordered_map<string, int>& stringToSerial, unordered_map<int, str
         outPutFile << false << '\n';
         outPutFile << "Book ID: " << book->getSerialNumber() << '\n';
         outPutFile.close();
-    
+
         setMap(stringToSerial, serialToString, book->getBookName(), book->getSerialNumber());
 
         cout << "Book Added To Library Successfully!" << '\n';
@@ -333,7 +332,7 @@ void addBook(unordered_map<string, int>& stringToSerial, unordered_map<int, stri
 
 void editBookInfo(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
     string inputString, tempInputString, bookName;
-    int inputNumber;
+    int inputNumber, replaceLineNumber;
     cout << "> Edit Book Information" << '\n' << '\n';
     cout << "Please Enter Book Name: "; cin >> tempInputString;
     bookName = tempInputString;
@@ -352,24 +351,27 @@ void editBookInfo(unordered_map<string, int>& stringToSerial, unordered_map<int,
                 cout << "Please Enter New Book Name: "; cin >> inputString;
             }
             tempInputString = tempInputString + " Book.txt";
-            replaceLine(tempInputString, 1, inputString);
+            replaceLineNumber = 1;
+            replaceLine(tempInputString, replaceLineNumber, inputString);
             renameMapInFile(bookName, inputString, stringToSerial, serialToString);
-            cout << "Book Name Changed Sucessfuly !" << '\n';
+            cout << "Book Name Changed Successfully !" << '\n';
             break;
 
         case 2:
             cout << "Please Enter New Author Name: "; cin >> inputString;
             tempInputString = tempInputString + " Book.txt";
-            replaceLine(tempInputString, 2, inputString);
-            cout << "Book Author Changed Sucessfuly !" << '\n';
+            replaceLineNumber = 2;
+            replaceLine(tempInputString, replaceLineNumber, inputString);
+            cout << "Book Author Changed Successfully !" << '\n';
             break;
 
         case 3:
             cin.ignore();
             cout << "Please Enter New Book Details: "; getline(cin, inputString);
             tempInputString = tempInputString + " Book.txt";
-            replaceLine(tempInputString, 3, inputString);
-            cout << "Book Details Changed Sucessfuly !" << '\n';
+            replaceLineNumber = 3;
+            replaceLine(tempInputString, replaceLineNumber, inputString);
+            cout << "Book Details Changed Successfully !" << '\n';
             break;
 
         default:
@@ -414,7 +416,7 @@ void deleteBook(unordered_map<string, int>& stringToSerial, unordered_map<int, s
         }
 
     if (remove(fileName.c_str())) {
-            cout << "Book Name Is Not Exist, Please Try Again !" << '\n';
+            cout << "Book Is Not Exist, Please Try Again !" << '\n';
         } else {
             removeFromMapFile(bookName, stringToSerial, serialToString);
             cout << "Book " << bookName << " Successfully Deleted From Library !" << '\n';
@@ -451,7 +453,7 @@ void updateFileSoldInfo(const string& bookName, const string& oldFileName, const
             ofstream outFile(newFileName);
             outFile << updatedContent;
             outFile.close();
-            cout << "Book Added To Your Archive Sucessfuly !" << '\n';
+            cout << "Book Added To Your Archive Successfully !" << '\n';
     }
 
 }
@@ -483,13 +485,13 @@ void printAllBooks(const unordered_map<int, string>& serialToString, const vecto
     cout << "> List Of All Books In The Library" << '\n';
 
     for (const auto& pair : serialToString) {
-        cout << "Book Name: " << pair.second << " Book ID: " << pair.first << '\n';
+        cout << "Book Name: " << pair.second << " | Book ID: " << pair.first << '\n';
     }
 
     cout << "> List Of All Book In The Archive" << '\n';
 
-    for (const auto& archiveBook : archiveBook) {
-        cout << archiveBook << '\n';
+    for (const auto& bookName : archiveBook) {
+        cout << "Archive Book: " << bookName << '\n';
     }
 }
 
@@ -553,6 +555,7 @@ int main() {
 
         } while (inputNumber != 7); {
             cout << "C++ Beginning Project Created By Amir Mohammad Mousavi - 1401 Bu-Ali University" << '\n';
+
     }
         delete book;
         return 0;
