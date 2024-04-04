@@ -79,7 +79,7 @@ void loadMapFromFile(unordered_map<string, int>& stringToSerial, unordered_map<i
     ifstream file("map.txt");
 
     if (file.good()) {
-
+        //Check file is exist
     } else {
         ofstream createFile("map.txt");
         if (createFile.is_open()) {
@@ -381,7 +381,6 @@ void editBookInfo(unordered_map<string, int>& stringToSerial, unordered_map<int,
 }
 
 void readBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
-    int inputNumber;
     string inputString;
 
     cout << "> Read Book" << '\n' << '\n';
@@ -437,13 +436,11 @@ void updateFileSoldInfo(const string& bookName, const string& oldFileName, const
             return;
         }
             ifstream inFile(newFileName);
-            string line;
-            string updatedContent;
+            string line, updatedContent;
             int lineNumber = 1;
             while (getline(inFile, line)) {
-
                 if (lineNumber == 4) {
-                    line = "1";
+                    break;
                 }
                 updatedContent += line + "\n";
                 ++lineNumber;
@@ -517,7 +514,7 @@ int main() {
     loadArchiveFromFile(archiveBookName);
 
     Book *book = new Book();
-    int inputNumber;
+    int inputNumber(0);
 
     cout << "---------------------------------Book Management System---------------------------------" << '\n';
 
