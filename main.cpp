@@ -245,7 +245,8 @@ string getMapString(unordered_map<int, string>& serialToSring, const int& inputI
 }
 
 void saveBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, Book* book) {
-    ofstream outPutFile(book->getBookName() + " Book.txt");
+    string bookFileName = book->getBookName() + " Book.txt";
+    ofstream outPutFile(bookFileName);
     if (outPutFile.is_open()) {
         outPutFile << "Book Name: " + book->getBookName() << '\n';
         outPutFile << "Book Author: " + book->getAuthorBook() << '\n';
