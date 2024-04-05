@@ -263,26 +263,23 @@ void saveBook(unordered_map<string, int>& stringToSerial, unordered_map<int, str
 }
 
 void openBook(const string& inputBookName) {
-    int lineNumber(0);
     ifstream inputFile(inputBookName);
-    if (inputFile.is_open()) {
-        string line;
-        cout << '\n';
-        while (getline(inputFile, line)) {
-            istringstream iss(line);
-            string token;
-            if (lineNumber < 3) {
-                while (getline(iss, token, ',')) {
-                    ++lineNumber;
-                    cout << token << '\n';
-                }
-            }
-        }
-        inputFile.close();
-        cout << '\n';
-    } else {
+    if (!inputFile.is_open()) {
         cout << "This Book Is Not Available, Please Try Another Book !" << '\n';
+        return;
     }
+
+    string line;
+    for (int i = 0; i < 3 && getline(inputFile, line); ++i) {
+        istringstream iss(line);
+        string token;
+        while (getline(iss, token, ',')) {
+            cout << token << '\n';
+        }
+    }
+
+    inputFile.close();
+    cout << '\n';
 }
 
 bool checkValidationID(unordered_map<int, string>& serialToString, unordered_map<string, int>& stringToSerial, const int& numberRecieve) {
@@ -384,7 +381,7 @@ void readBook(unordered_map<string, int>& stringToSerial, unordered_map<int, str
     string inputString;
 
     cout << "> Read Book" << '\n' << '\n';
-    cout << "Please Enter Book Name: "; cin >> inputString;
+    cout << "Please Enter Book Name: "; cin >> inputString; cout << '\n';
     inputString = inputString + " Archive.txt";
     if (readBuyBook(inputString)) {
         openBook(inputString);
