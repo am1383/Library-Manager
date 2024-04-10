@@ -44,24 +44,31 @@ void replaceLine(string& fileName, const int& lineNumber, string newText) {
     ifstream inFile(fileName);
 
     vector<string> lines;
-    string line;
+    string line, newFileName;
 
     while (getline(inFile, line)) {
         lines.push_back(line);
     }
 
     inFile.close();
-    if (lineNumber == 1) {
-        string newFileName = newText + " Book.txt";
-        rename(fileName.c_str(), newFileName.c_str());
-        fileName = newFileName;
-    } else if (lineNumber == 2) {
-        newText = "Author Name: " + newText;
-    } else if (lineNumber == 3) {
-        newText = "Book Details: " + newText;
-    } else {
-        cout << "Invalid Line Number, Please Try Again !" << '\n';
-        return;
+    switch (lineNumber) {
+        case 1:
+            newFileName = newText + " Book.txt";
+            rename(fileName.c_str(), newFileName.c_str());
+            fileName = newFileName;
+            break;
+
+        case 2:
+            newText = "Author Name: " + newText;
+            break;
+
+        case 3:
+            newText = "Book Details: " + newText;
+            break;
+
+        default:
+            cout << "Invalid Line Number, Please Try Again !" << '\n';
+            break;
     }
     lines[lineNumber - 1] = newText;
     ofstream outFile(fileName);
@@ -384,11 +391,11 @@ void readBook(unordered_map<string, int>& stringToSerial, unordered_map<int, str
     cout << "> Read Book" << '\n' << '\n';
     cout << "Please Enter Book Name: "; cin >> inputString; cout << '\n';
     inputString = inputString + " Archive.txt";
-    if (readBuyBook(inputString)) {
-        openBook(inputString);
-    } else {
+    if (!readBuyBook(inputString)) {
         cout << "This Book In Not In Your Archive, Please Try Again !" << '\n';
+        return;
     }
+    openBook(inputString);
 }
 
 void deleteBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
@@ -490,7 +497,7 @@ void printAllBooks(const unordered_map<int, string>& serialToString, const vecto
     }
 }
 
-void helpMenu() {
+inline void helpMenu() {
 
     cout << "> Help Page\n\n"
          << "0 -> Help System\n"
