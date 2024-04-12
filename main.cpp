@@ -126,7 +126,7 @@ void loadArchiveFromFile(vector<string>& archiveBookName) {
     } else {
         ofstream createFile("Archive.txt");
         if (createFile.is_open()) {
-                createFile.close();
+            createFile.close();
 
         } else {
             cout << "Unable To Open Archive File, Please Contact Developers !" << '\n';
@@ -421,6 +421,7 @@ void deleteBook(unordered_map<string, int>& stringToSerial, unordered_map<int, s
 
     if (remove(fileName.c_str())) {
             cout << "Book Is Not Exist, Please Try Again !" << '\n';
+            return;
         } else {
             removeFromMapFile(bookName, stringToSerial, serialToString);
             cout << "Book " << bookName << " Successfully Deleted From Library !" << '\n';
@@ -436,10 +437,8 @@ void updateFileSoldInfo(const string& bookName, const string& oldFileName, const
         return;
 
     } else {
-        if (rename(oldFileName.c_str(), newFileName.c_str()) != 0) {
-            cout << "Unable To Rename File From " << oldFileName << " To " << newFileName << '\n';
-            return;
-        }
+        rename(oldFileName.c_str(), newFileName.c_str()) != 0;
+
             ifstream inFile(newFileName);
             string line, updatedContent;
             int lineNumber = 1;
