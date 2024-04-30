@@ -22,11 +22,11 @@ public:
     bool getSoldStatus() const {return soldStatus;}
     int getSerialNumber() const {return serialNumber;}
 
-    void setBookName(const string& bookNameR) {bookName = bookNameR;}
-    void setAuthorBook(const string& authorBookR) {authorBook = authorBookR;}
-    void setBookDetails(const string& bookDetailsR) {bookDetails = bookDetailsR;}
-    void setSerialNumber(const int& serialNumberR) {serialNumber = serialNumberR;}
-    void setSoldStatus(const bool& soldStatusR) {soldStatus = soldStatusR;}
+    void setBookName(const string& _bookName) {bookName = _bookName;}
+    void setAuthorBook(const string& _authorBook) {authorBook = _authorBook;}
+    void setBookDetails(const string& _bookDetails) {bookDetails = _bookDetails;}
+    void setSerialNumber(const int& _serialNumber) {serialNumber = _serialNumber;}
+    void setSoldStatus(const bool& _soldStatus) {soldStatus = _soldStatus;}
 };
 
 //Function to check map changes
@@ -40,7 +40,7 @@ bool hasFileChanged(const unordered_map<string, int>& stringToSerial) {
     return false;
 }
 
-void replaceLine(string& fileName, const int& lineNumber, string newText) {
+void replaceLine(string& fileName, const int& lineNumber, string& newText) {
     ifstream inFile(fileName);
 
     vector<string> lines;
@@ -133,6 +133,7 @@ void loadArchiveFromFile(vector<string>& archiveBookName) {
         }
     }
     string line;
+    
     while (getline(file, line)) {
         archiveBookName.push_back(line);
     }
@@ -253,6 +254,7 @@ string getMapString(unordered_map<int, string>& serialToSring, const int& inputI
 
 void saveBook(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString, Book* book) {
     string bookFileName = book->getBookName() + " Book.txt";
+
     ofstream outPutFile(bookFileName);
     if (outPutFile.is_open()) {
         outPutFile << "Book Name: " + book->getBookName() << '\n';
@@ -278,6 +280,7 @@ void openBook(const string& inputBookName) {
     }
 
     string line;
+
     for (int i = 0; i < 3 && getline(inputFile, line); ++i) {
         istringstream iss(line);
         string token;
@@ -338,6 +341,7 @@ void addBook(unordered_map<string, int>& stringToSerial, unordered_map<int, stri
 void editBookInfo(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
     string inputString, tempInputString, bookName;
     int inputNumber, replaceLineNumber;
+
     cout << "> Edit Book Information" << '\n' << '\n';
     cout << "Please Enter Book Name: "; cin >> tempInputString;
     bookName = tempInputString;
@@ -357,7 +361,8 @@ void editBookInfo(unordered_map<string, int>& stringToSerial, unordered_map<int,
             }
             tempInputString = tempInputString + " Book.txt";
             replaceLineNumber = 1;
-            replaceLine(tempInputString, replaceLineNumber, inputString);
+            string tInputString = inputString;
+            replaceLine(tempInputString, replaceLineNumber, tInputString);
             renameMapInFile(bookName, inputString, stringToSerial, serialToString);
             cout << "Book Name Changed Successfully !" << '\n';
             break;
@@ -410,10 +415,12 @@ void deleteBook(unordered_map<string, int>& stringToSerial, unordered_map<int, s
             bookName = getMapString(serialToString, inputNumber);
             fileName = bookName + " Book.txt";
             break;
+
         case 2:
             cout << "Please Enter Book Name: "; cin >> bookName;
             fileName = bookName + " Book.txt";
             break;
+
         default:
             cout << "Invalid Key, Please Try Again !" << '\n';
             break;
@@ -438,10 +445,10 @@ void updateFileSoldInfo(const string& bookName, const string& oldFileName, const
 
     } else {
         rename(oldFileName.c_str(), newFileName.c_str()) != 0;
-
             ifstream inFile(newFileName);
             string line, updatedContent;
             int lineNumber = 1;
+
             while (getline(inFile, line)) {
                 if (lineNumber == 4) {
                     break;
@@ -477,7 +484,6 @@ void buyBook(unordered_map<string, int>& stringToSerial, unordered_map<int, stri
     updateFileSoldInfo(inputBookName, inputString, tempInputString);
     removeFromMapFile(inputBookName, stringToSerial, serialToString);
     saveArchiveToFile(archiveBookName, inputBookName);
-
 }
 
 //Function for print all bookName stored in files
@@ -556,7 +562,6 @@ int main() {
 
         } while (inputNumber != 7); {
             cout << "C++ Beginning Project Created By Amir Mohammad Mousavi - 1401 Bu-Ali University" << '\n';
-
     }
         delete book;
         return 0;
