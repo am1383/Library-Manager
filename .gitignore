@@ -5,7 +5,8 @@
 #Cache folder
 .alcache/
 #Symbols folder
-.txt/
+*.txt
+*.exe
 #Information file folder
 .o/
 #Gpluse compiler folder

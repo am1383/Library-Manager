@@ -339,7 +339,7 @@ void addBook(unordered_map<string, int>& stringToSerial, unordered_map<int, stri
 }
 
 void editBookInfo(unordered_map<string, int>& stringToSerial, unordered_map<int, string>& serialToString) {
-    string inputString, tempInputString, bookName;
+    string inputString, tempInputString, bookName, tInputString;
     int inputNumber, replaceLineNumber;
 
     cout << "> Edit Book Information" << '\n' << '\n';
@@ -351,7 +351,6 @@ void editBookInfo(unordered_map<string, int>& stringToSerial, unordered_map<int,
         cout << "Please Enter New Book Name: "; cin >> tempInputString;
     }
     cout << "Please Enter Your Choose: "; cin >> inputNumber;
-
     switch (inputNumber) {
         case 1:
             cout << "Please Enter New Book Name: "; cin >> inputString;
@@ -361,7 +360,8 @@ void editBookInfo(unordered_map<string, int>& stringToSerial, unordered_map<int,
             }
             tempInputString = tempInputString + " Book.txt";
             replaceLineNumber = 1;
-            string tInputString = inputString;
+            tInputString = inputString;
+
             replaceLine(tempInputString, replaceLineNumber, tInputString);
             renameMapInFile(bookName, inputString, stringToSerial, serialToString);
             cout << "Book Name Changed Successfully !" << '\n';
@@ -561,7 +561,7 @@ int main() {
             }
 
         } while (inputNumber != 7); {
-            cout << "C++ Beginning Project Created By Amir Mohammad Mousavi - 1401 Bu-Ali University" << '\n';
+            cout << "CS50 Final Project - Created By Seyed Amir Mohammad Mousavi" << '\n';
     }
         delete book;
         return 0;
